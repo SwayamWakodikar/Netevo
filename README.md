@@ -1,4 +1,4 @@
-# 🚀 Notevo
+# 🚀 Netevo
 
 > A scalable, multi-tenant collaboration platform built with microservices, real-time systems, and cloud-native architecture.
 
@@ -6,7 +6,7 @@
 
 ## 📌 Overview
 
-**Notevo** is a modern team collaboration platform that enables organizations to:
+**Netevo** is a modern team collaboration platform that enables organizations to:
 
 - Organize work into structured workspaces  
 - Create and manage rich documents  
@@ -19,7 +19,7 @@ The system is designed for **high scalability, strong tenant isolation, and low-
 
 ## 🏗️ Architecture
 
-Notevo follows a **microservices architecture** with independently deployable services.
+Netevo follows a **microservices architecture** with independently deployable services.
 
 ### Core Services
 
