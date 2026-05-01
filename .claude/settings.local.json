@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch"
+    ]
+  },
+    "web_search": {
+    "enabled": true,
+    "default_search_engine": "google",
+    "gemini_api_key": ""  
+  }
+}
