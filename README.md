@@ -80,3 +80,138 @@ Netevo follows a **microservices architecture** with independently deployable se
 ---
 
 ## 📂 Repository Structure
+```
+netevo/
+│
+├── apps/                                   # Things that face the outside world
+│   └── web/                                # Frontend (React/Next.js) — add later
+│
+├── services/                               # All six microservices
+│   │
+│   ├── api-gateway/
+│   │   ├── cmd/
+│   │   │   └── server/
+│   │   │       └── main.go                 # Entry point — starts the server
+│   │   ├── internal/
+│   │   │   ├── handlers/                   # HTTP route handlers
+│   │   │   ├── middleware/                 # Auth, logging, tracing middleware
+│   │   │   └── proxy/                      # Reverse proxy logic per service
+│   │   ├── Dockerfile
+│   │   └── go.mod                          # This service's own dependency list
+│   │
+│   ├── auth-service/
+│   │   ├── cmd/
+│   │   │   └── server/
+│   │   │       └── main.go
+│   │   ├── internal/
+│   │   │   ├── handlers/                   # HTTP handlers (register, login, refresh)
+│   │   │   ├── middleware/                 # JWT validation middleware
+│   │   │   ├── models/                     # Struct definitions (User, Token, etc.)
+│   │   │   ├── repository/                 # All DB queries — no business logic here
+│   │   │   └── service/                    # Business logic — no HTTP or DB here
+│   │   ├── Dockerfile
+│   │   └── go.mod
+│   │
+│   ├── user-service/
+│   │   ├── cmd/
+│   │   │   └── server/
+│   │   │       └── main.go
+│   │   ├── internal/
+│   │   │   ├── handlers/                   # Org, workspace, invitation handlers
+│   │   │   ├── middleware/                 # RBAC middleware
+│   │   │   ├── models/
+│   │   │   ├── repository/                 # Postgres queries — schema-per-tenant
+│   │   │   └── service/                    # Org creation, invite logic
+│   │   ├── Dockerfile
+│   │   └── go.mod
+│   │
+│   ├── note-service/
+│   │   ├── cmd/
+│   │   │   └── server/
+│   │   │       └── main.go
+│   │   ├── internal/
+│   │   │   ├── handlers/
+│   │   │   │   ├── http.go                 # REST handlers (CRUD)
+│   │   │   │   └── websocket.go            # WebSocket upgrade + message handling
+│   │   │   ├── middleware/
+│   │   │   ├── models/
+│   │   │   ├── repository/                 # JSONB queries, optimistic locking
+│   │   │   ├── service/
+│   │   │   └── realtime/
+│   │   │       └── hub.go                  # Manages WS connections + Redis pub/sub
+│   │   ├── Dockerfile
+│   │   └── go.mod
+│   │
+│   ├── notification-service/
+│   │   ├── cmd/
+│   │   │   └── server/
+│   │   │       └── main.go
+│   │   ├── internal/
+│   │   │   ├── consumer/                   # RabbitMQ consumer — no HTTP server
+│   │   │   ├── models/
+│   │   │   ├── repository/                 # MongoDB writes
+│   │   │   └── service/                    # Email dispatch, idempotency logic
+│   │   ├── Dockerfile
+│   │   └── go.mod
+│   │
+│   └── search-service/
+│       ├── cmd/
+│       │   └── server/
+│       │       └── main.go
+│       ├── internal/
+│       │   ├── handlers/                   # gRPC handlers only — no HTTP
+│       │   ├── consumer/                   # RabbitMQ consumer for index events
+│       │   ├── repository/                 # Meilisearch client
+│       │   └── service/
+│       ├── Dockerfile
+│       └── go.mod
+│
+├── packages/                               # Shared code used by multiple services
+│   └── proto/                              # gRPC contracts
+│       ├── auth/
+│       │   └── auth.proto                  # ValidateToken RPC definition
+│       ├── search/
+│       │   └── search.proto                # Search RPC definition
+│       └── gen/                            # Auto-generated Go code — never edit manually
+│           ├── auth/
+│           └── search/
+│
+├── infra/                                  # Everything deployment related
+│   ├── docker/
+│   │   └── docker-compose.yml              # Starts entire local stack in one command
+│   ├── k8s/
+│   │   └── helm/                           # Helm charts — one per service
+│   │       ├── api-gateway/
+│   │       ├── auth-service/
+│   │       ├── user-service/
+│   │       ├── note-service/
+│   │       ├── notification-service/
+│   │       └── search-service/
+│   ├── terraform/                          # Cloud infrastructure as code
+│   └── monitoring/
+│       ├── prometheus.yml
+│       └── grafana/
+│           └── dashboards/
+│
+├── docs/                                   # Architecture Decision Records
+│   └── adr/
+│       ├── 001-schema-per-tenant.md
+│       ├── 002-grpc-for-internal-calls.md
+│       ├── 003-rabbitmq-event-bus.md
+│       ├── 004-go-only-stack.md
+│       └── 005-redis-pubsub-websocket-scaling.md
+│
+├── scripts/
+│   ├── migrate.sh                          # Run migrations across all tenant schemas
+│   └── gen-proto.sh                        # Regenerate gRPC code from .proto files
+│
+├── .github/
+│   └── workflows/
+│       ├── auth-service.yml
+│       ├── user-service.yml
+│       ├── note-service.yml
+│       ├── notification-service.yml
+│       └── search-service.yml
+│
+└── README.md
+```
