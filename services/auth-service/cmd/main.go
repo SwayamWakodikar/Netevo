@@ -11,6 +11,10 @@ func main() {
 
 	cfg := config.Load()
 
+	if cfg.SupabaseURL == "" || cfg.SupabaseKey == "" {
+		log.Fatal("SUPABASE_URL or SUPABASE_KEY not set in environment")
+	}
+	
 	sb := service.NewSupabase(cfg)
 
 	log.Println("Supabase Connected")

@@ -12,6 +12,7 @@ type Config struct {
 
 func Load() *Config {
 	godotenv.Load()
+	
 	return &Config{
 		SupabaseURL: os.Getenv("SUPABASE_URL"),
 		SupabaseKey: os.Getenv("SUPABASE_KEY"),
