@@ -3,15 +3,17 @@ package main
 import (
 	"log"
 
-	"github.com/gin-gonic/gin"
+	"github.com/SwayamWakodikar/netevo/services/auth-service/internal/config"
+	"github.com/SwayamWakodikar/netevo/services/auth-service/internal/service"
 )
 
 func main() {
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, "auth service")
-	})
-	
-	log.Println("Server running on :8080")
-	r.Run(":8080")
+
+	cfg := config.Load()
+
+	sb := service.NewSupabase(cfg)
+
+	log.Println("Supabase Connected")
+
+	_ = sb
 }
