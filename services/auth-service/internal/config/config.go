@@ -11,7 +11,7 @@ type Config struct {
 }
 
 func Load() *Config {
-	godotenv.Load()
+	godotenv.Load("../.env")
 	
 	return &Config{
 		SupabaseURL: os.Getenv("SUPABASE_URL"),
