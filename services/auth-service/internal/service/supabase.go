@@ -42,7 +42,8 @@ func (s *SupabaseService) GetUserByEmail(ctx context.Context, email string) (*mo
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch user: status %d", resp.StatusCode)
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("failed to fetch user: status %d, details: %s", resp.StatusCode, string(bodyBytes))
 	}
 
 	var users []models.User
@@ -119,7 +120,8 @@ func (s *SupabaseService) CreateUser(ctx context.Context, payload map[string]int
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
-		return nil, fmt.Errorf("failed to create user: status %d", resp.StatusCode)
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("failed to create user: status %d, details: %s", resp.StatusCode, string(bodyBytes))
 	}
 
 	var users []models.User
