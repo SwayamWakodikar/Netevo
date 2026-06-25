@@ -24,7 +24,7 @@ func NewAuthHandler(cfg *config.Config) *AuthHandler {
 	}
 }
 
-// Signup handles user registration
+//Signup func to handle signup (add new user to db)
 func (h *AuthHandler) Signup(c *gin.Context) {
 	var req models.SignupRequest
 
