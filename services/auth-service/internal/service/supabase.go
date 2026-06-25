@@ -24,7 +24,6 @@ func NewSupabaseService(cfg *config.Config, client *http.Client) *SupabaseServic
 	}
 }
 
-// GetUserByEmail fetches a user from Supabase by email
 func (s *SupabaseService) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	url := fmt.Sprintf("%s/rest/v1/users?email=eq.%s", s.Config.SupabaseURL, email)
 
@@ -60,7 +59,6 @@ func (s *SupabaseService) GetUserByEmail(ctx context.Context, email string) (*mo
 	return &users[0], nil
 }
 
-// GetUserByID fetches a user from Supabase by ID
 func (s *SupabaseService) GetUserByID(ctx context.Context, userID string) (*models.User, error) {
 	url := fmt.Sprintf("%s/rest/v1/users?id=eq.%s", s.Config.SupabaseURL, userID)
 
@@ -95,7 +93,6 @@ func (s *SupabaseService) GetUserByID(ctx context.Context, userID string) (*mode
 	return &users[0], nil
 }
 
-// CreateUser creates a new user in Supabase
 func (s *SupabaseService) CreateUser(ctx context.Context, payload map[string]interface{}) (*models.User, error) {
 	url := fmt.Sprintf("%s/rest/v1/users", s.Config.SupabaseURL)
 
@@ -138,7 +135,6 @@ func (s *SupabaseService) CreateUser(ctx context.Context, payload map[string]int
 	return &users[0], nil
 }
 
-// setSupabaseHeaders sets required Supabase headers for API requests
 func (s *SupabaseService) setSupabaseHeaders(req *http.Request) {
 	req.Header.Set("apikey", s.Config.SupabaseKey)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.Config.SupabaseKey))

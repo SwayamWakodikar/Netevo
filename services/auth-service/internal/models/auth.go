@@ -17,13 +17,19 @@ type AuthResponse struct {
 	Message string `json:"message"`
 	User    *User  `json:"user,omitempty"`
 	Token   string `json:"token,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"`
 }
 
 type User struct {
 	ID        string    `json:"id" db:"id"`
 	Email     string    `json:"email" db:"email"`
 	Username  string    `json:"username" db:"username"`
+	Password  string    `json:"password,omitempty" db:"password"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
+}
+
+type RefreshRequest struct {
+	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 
 type ErrorResponse struct {

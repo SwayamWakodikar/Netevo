@@ -20,11 +20,10 @@ func NewAuthHandler(cfg *config.Config) *AuthHandler {
 	client := &http.Client{Timeout: 10 * time.Second}
 	return &AuthHandler{
 		SupabaseService: service.NewSupabaseService(cfg, client),
-		TokenService:    service.NewTokenService(),
+		TokenService:    service.NewTokenService(cfg.JWT_SECRET),
 	}
 }
 
-//Signup func to handle signup (add new user to db)
 func (h *AuthHandler) Signup(c *gin.Context) {
 	var req models.SignupRequest
 
@@ -37,7 +36,6 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 
 	ctx := context.Background()
 
-	// Check if user already exists
 	existingUser, err := h.SupabaseService.GetUserByEmail(ctx, req.Email)
 	if err == nil && existingUser != nil {
 		c.JSON(http.StatusConflict, models.ErrorResponse{
@@ -46,7 +44,6 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-	// Hash password
 	hashedPassword, err := h.TokenService.HashPassword(req.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
@@ -55,7 +52,6 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-	// Create new user
 	newUserPayload := map[string]interface{}{
 		"email":      req.Email,
 		"username":   req.Username,
@@ -71,17 +67,24 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-	// Generate token
-	token := h.TokenService.GenerateToken(user)
+	accessToken, refreshToken, err := h.TokenService.GenerateTokens(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: "Failed to generate tokens",
+		})
+		return
+	}
+
+	user.Password = ""
 
 	c.JSON(http.StatusCreated, models.AuthResponse{
-		Message: "User signed up successfully",
-		User:    user,
-		Token:   token,
+		Message:      "User signed up successfully",
+		User:         user,
+		Token:        accessToken,
+		RefreshToken: refreshToken,
 	})
 }
 
-// Login handles user authentication
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req models.LoginRequest
 
@@ -94,7 +97,6 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	ctx := context.Background()
 
-	// Find user by email
 	user, err := h.SupabaseService.GetUserByEmail(ctx, req.Email)
 	if err != nil || user == nil {
 		c.JSON(http.StatusUnauthorized, models.ErrorResponse{
@@ -103,45 +105,74 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// TODO: Implement password hash verification with user.Password
-
-	// Generate token
-	token := h.TokenService.GenerateToken(user)
-
-	c.JSON(http.StatusOK, models.AuthResponse{
-		Message: "User logged in successfully",
-		User:    user,
-		Token:   token,
-	})
-}
-
-// GetProfile returns the current user's profile
-func (h *AuthHandler) GetProfile(c *gin.Context) {
-	userID := c.GetString("user_id")
-	if userID == "" {
+	if !h.TokenService.VerifyPassword(user.Password, req.Password) {
 		c.JSON(http.StatusUnauthorized, models.ErrorResponse{
-			Error: "Unauthorized",
+			Error: "Invalid email or password",
 		})
 		return
 	}
 
-	ctx := context.Background()
+	accessToken, refreshToken, err := h.TokenService.GenerateTokens(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: "Failed to generate tokens",
+		})
+		return
+	}
 
-	user, err := h.SupabaseService.GetUserByID(ctx, userID)
-	if err != nil || user == nil {
-		c.JSON(http.StatusNotFound, models.ErrorResponse{
-			Error: "User not found",
+	user.Password = ""
+
+	c.JSON(http.StatusOK, models.AuthResponse{
+		Message:      "User logged in successfully",
+		User:         user,
+		Token:        accessToken,
+		RefreshToken: refreshToken,
+	})
+}
+
+func (h *AuthHandler) GetProfile(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Protected profile endpoint",
+	})
+}
+
+func (h *AuthHandler) Refresh(c *gin.Context) {
+	var req models.RefreshRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	claims, err := h.TokenService.ValidateToken(req.RefreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, models.ErrorResponse{
+			Error: "Invalid or expired refresh token",
+		})
+		return
+	}
+
+	user := &models.User{
+		ID: claims.UserID,
+	}
+
+	accessToken, refreshToken, err := h.TokenService.GenerateTokens(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: "Failed to generate tokens",
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, models.AuthResponse{
-		Message: "Profile retrieved",
-		User:    user,
+		Message:      "Tokens refreshed successfully",
+		Token:        accessToken,
+		RefreshToken: refreshToken,
 	})
 }
 
-// Logout handles user logout
 func (h *AuthHandler) Logout(c *gin.Context) {
 	c.JSON(http.StatusOK, models.AuthResponse{
 		Message: "User logged out successfully",
