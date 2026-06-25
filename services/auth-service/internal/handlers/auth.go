@@ -97,7 +97,20 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	ctx := context.Background()
 
-	user, err := h.SupabaseService.GetUserByEmail(ctx, req.Email)
+	var user *models.User
+	var err error
+
+	if req.Email != "" {
+		user, err = h.SupabaseService.GetUserByEmail(ctx, req.Email)
+	} else if req.Username != "" {
+		user, err = h.SupabaseService.GetUserByUsername(ctx, req.Username)
+	} else {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: "Must provide either email or username",
+		})
+		return
+	}
+
 	if err != nil || user == nil {
 		c.JSON(http.StatusUnauthorized, models.ErrorResponse{
 			Error: "Invalid email or password",

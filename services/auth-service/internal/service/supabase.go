@@ -59,6 +59,41 @@ func (s *SupabaseService) GetUserByEmail(ctx context.Context, email string) (*mo
 	return &users[0], nil
 }
 
+func (s *SupabaseService) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
+	url := fmt.Sprintf("%s/rest/v1/users?username=eq.%s", s.Config.SupabaseURL, username)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	s.setSupabaseHeaders(req)
+
+	resp, err := s.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("failed to fetch user: status %d, details: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	var users []models.User
+	body, _ := io.ReadAll(resp.Body)
+	err = json.Unmarshal(body, &users)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(users) == 0 {
+		return nil, nil
+	}
+
+	return &users[0], nil
+}
+
 func (s *SupabaseService) GetUserByID(ctx context.Context, userID string) (*models.User, error) {
 	url := fmt.Sprintf("%s/rest/v1/users?id=eq.%s", s.Config.SupabaseURL, userID)
 

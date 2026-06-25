@@ -9,7 +9,8 @@ type SignupRequest struct {
 }
 
 type LoginRequest struct {
-	Email    string `json:"email" binding:"required,email"`
+	Email    string `json:"email,omitempty"`
+	Username string `json:"username,omitempty"`
 	Password string `json:"password" binding:"required"`
 }
 
