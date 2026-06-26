@@ -1,0 +1,11 @@
+version: "5.1.1"
+services:
+  auth-service:
+    build: 
+      context: ../../services/auth-service
+      dockerfile: Dockerfile
+    ports: 
+      - "8081:8080"
+    env_file:
+      - ../../services/auth-service/.env
+      
