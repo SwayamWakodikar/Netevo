@@ -8,4 +8,14 @@ services:
       - "8081:8080"
     env_file:
       - ../../services/auth-service/.env
+  api-gateway:
+    build: 
+      context: ../../services/api-gateway
+      dockerfile: Dockerfile
+    ports: 
+      - "8080:8080"
+    env_file:
+      - ../../services/api-gateway/.env
+    depends_on:
+      - auth-service
       
