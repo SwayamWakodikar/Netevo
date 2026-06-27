@@ -9,7 +9,6 @@ import {
   ArrowDown, ArrowUp, Navigation, Edit2, LayoutDashboard
 } from 'lucide-react'
 import { useToast } from '../components/Toast'
-import './DashboardPage.css'
 
 /* ================================================================
    DUMMY DATA
@@ -414,7 +413,7 @@ export default function DashboardPage() {
 
   /* ---- Share link copy ---- */
   const handleCopyLink = () => {
-    navigator.clipboard?.writeText(`https://notevo.app/doc/${activeNote}`)
+    navigator.clipboard?.writeText(`https://Netevo.app/doc/${activeNote}`)
     setLinkCopied(true)
     setTimeout(() => setLinkCopied(false), 2000)
   }
@@ -463,26 +462,26 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="dashboard">
+    <div className="flex h-screen overflow-hidden bg-bg-primary">
       {/* ======== MODALS ======== */}
 
       {/* Search Overlay */}
       {showSearch && (
-        <div className="search-overlay" onClick={() => setShowSearch(false)}>
-          <div className="search-modal" onClick={e => e.stopPropagation()}>
-            <div className="search-modal-input">
+        <div className="fixed inset-0 z-[200] bg-[rgba(0,0,0,0.6)] flex items-start justify-center pt-[120px] animate-[fadeIn_0.15s_ease]" onClick={() => setShowSearch(false)}>
+          <div className="w-[560px] max-w-[90vw] bg-bg-secondary border border-border-default rounded-lg shadow-xl overflow-hidden animate-[fadeInUp_0.2s_ease]" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2 px-5 py-4 border-b border-border-muted text-text-muted">
               <Search size={18} />
-              <input type="text" placeholder="Search docs, people, commands..." value={globalSearch} onChange={e => setGlobalSearch(e.target.value)} autoFocus />
-              <kbd className="kbd">ESC</kbd>
+              <input type="text" className="flex-1 text-base text-text-primary bg-transparent outline-none placeholder:text-text-faint" placeholder="Search docs, people, commands..." value={globalSearch} onChange={e => setGlobalSearch(e.target.value)} autoFocus />
+              <kbd className="px-2 py-1 rounded-md bg-[linear-gradient(180deg,var(--color-bg-tertiary)_0%,var(--color-bg-primary)_100%)] border border-border-default border-b-border-muted shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.4)] text-[0.6875rem] font-medium text-text-primary inline-flex items-center justify-center min-w-[24px]">ESC</kbd>
             </div>
-            <div className="search-results">
+            <div className="max-h-[320px] overflow-y-auto p-2">
               {globalSearch ? (
                 searchResults.length > 0 ? searchResults.map(r => (
-                  <div key={r.id} className="search-result-item" onClick={() => { setActiveNote(r.id); setShowSearch(false); setGlobalSearch('') }}>
-                    <FileText size={14} /> <span>{r.title}</span> <span className="search-result-tag">{r.tag}</span>
+                  <div key={r.id} className="flex items-center gap-2 px-3 py-2.5 rounded-md text-[0.875rem] text-text-secondary cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => { setActiveNote(r.id); setShowSearch(false); setGlobalSearch('') }}>
+                    <FileText size={14} /> <span>{r.title}</span> <span className="ml-auto text-[0.6875rem] text-text-faint px-2 py-0.5 rounded-full bg-bg-elevated">{r.tag}</span>
                   </div>
-                )) : <div className="modal-empty">No results for "{globalSearch}"</div>
-              ) : <div className="modal-empty">Type to search across all documents...</div>}
+                )) : <div className="p-8 text-center text-[0.8125rem] text-text-faint">No results for "{globalSearch}"</div>
+              ) : <div className="p-8 text-center text-[0.8125rem] text-text-faint">Type to search across all documents...</div>}
             </div>
           </div>
         </div>
@@ -490,25 +489,25 @@ export default function DashboardPage() {
 
       {/* Inbox Panel */}
       {showInbox && (
-        <div className="modal-overlay" onClick={() => setShowInbox(false)}>
-          <div className="center-modal" onClick={e => e.stopPropagation()}>
-            <div className="panel-header">
-              <h3><Inbox size={16} /> Inbox</h3>
-              <div className="panel-header-actions">
-                <button className="btn btn-ghost" onClick={markAllRead}>Mark all read</button>
-                <button className="panel-close" onClick={() => setShowInbox(false)}><X size={16} /></button>
+        <div className="fixed inset-0 z-[200] bg-[rgba(0,0,0,0.4)] backdrop-blur-[2px] flex animate-[fadeIn_0.15s_ease]" onClick={() => setShowInbox(false)}>
+          <div className="m-auto bg-bg-secondary border border-border-default rounded-lg shadow-xl w-[480px] max-w-[90vw] max-h-[85vh] flex flex-col animate-[fadeInUp_0.2s_ease] overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-muted bg-bg-tertiary">
+              <h3 className="text-[0.9375rem] font-semibold text-text-primary flex items-center gap-2"><Inbox size={16} /> Inbox</h3>
+              <div className="flex items-center gap-2">
+                <button className="text-text-primary hover:bg-bg-elevated px-4 py-2 inline-flex items-center justify-center font-medium rounded-md transition-colors whitespace-nowrap gap-2 text-sm" onClick={markAllRead}>Mark all read</button>
+                <button className="text-text-faint p-1 rounded-md flex cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => setShowInbox(false)}><X size={16} /></button>
               </div>
             </div>
-            <div className="panel-body">
+            <div className="flex-1 overflow-y-auto p-0">
               {notifications.map(n => (
-                <div key={n.id} className={`inbox-item ${n.read ? 'read' : ''}`} onClick={() => {
+                <div key={n.id} className={`flex items-start gap-2 px-5 py-3.5 border-b border-border-muted cursor-pointer transition-all duration-150 hover:bg-bg-elevated ${n.read ? 'opacity-60' : ''}`} onClick={() => {
                   markNotificationRead(n.id)
                   if (n.noteId) { setActiveNote(n.noteId); setShowInbox(false) }
                 }}>
-                  <div className={`inbox-dot ${n.read ? '' : 'unread'}`} />
-                  <div className="inbox-content">
-                    <p className="inbox-text">{n.text}</p>
-                    <span className="inbox-time">{n.time}</span>
+                  <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.read ? '' : 'bg-status-blue'}`} />
+                  <div className="flex-1">
+                    <p className="text-[0.8125rem] text-text-primary mb-1 leading-[1.4]">{n.text}</p>
+                    <span className="text-[0.6875rem] text-text-faint">{n.time}</span>
                   </div>
                 </div>
               ))}
@@ -519,21 +518,21 @@ export default function DashboardPage() {
 
       {/* Members Panel */}
       {showMembers && (
-        <div className="modal-overlay" onClick={() => setShowMembers(false)}>
-          <div className="center-modal" onClick={e => e.stopPropagation()}>
-            <div className="panel-header">
-              <h3><Users size={16} /> Team Members</h3>
-              <button className="panel-close" onClick={() => setShowMembers(false)}><X size={16} /></button>
+        <div className="fixed inset-0 z-[200] bg-[rgba(0,0,0,0.4)] backdrop-blur-[2px] flex animate-[fadeIn_0.15s_ease]" onClick={() => setShowMembers(false)}>
+          <div className="m-auto bg-bg-secondary border border-border-default rounded-lg shadow-xl w-[480px] max-w-[90vw] max-h-[85vh] flex flex-col animate-[fadeInUp_0.2s_ease] overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-muted bg-bg-tertiary">
+              <h3 className="text-[0.9375rem] font-semibold text-text-primary flex items-center gap-2"><Users size={16} /> Team Members</h3>
+              <button className="text-text-faint p-1 rounded-md flex cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => setShowMembers(false)}><X size={16} /></button>
             </div>
-            <div className="panel-body">
+            <div className="flex-1 overflow-y-auto p-0">
               {teamMembers.map((m, i) => (
-                <div key={i} className="member-item">
-                  <div className="avatar" style={{ backgroundColor: m.color }}>{m.initials}</div>
-                  <div className="member-info">
-                    <span className="member-name">{m.name}</span>
-                    <span className="member-role">{m.role} · {m.email}</span>
+                <div key={i} className="flex items-center gap-4 px-5 py-3 border-b border-border-muted">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-[0.8125rem] font-bold text-white flex-shrink-0" style={{ backgroundColor: m.color }}>{m.initials}</div>
+                  <div className="flex-1 flex flex-col">
+                    <span className="text-[0.875rem] font-medium text-text-primary">{m.name}</span>
+                    <span className="text-[0.75rem] text-text-faint">{m.role} · {m.email}</span>
                   </div>
-                  <span className={`member-status ${m.status}`}>{m.status}</span>
+                  <span className={`text-[0.6875rem] px-2 py-0.5 rounded-full bg-bg-elevated capitalize ${m.status === 'online' ? 'text-status-green' : m.status === 'away' ? 'text-status-orange' : 'text-text-faint'}`}>{m.status}</span>
                 </div>
               ))}
             </div>
@@ -543,24 +542,24 @@ export default function DashboardPage() {
 
       {/* Trash Panel */}
       {showTrash && (
-        <div className="modal-overlay" onClick={() => setShowTrash(false)}>
-          <div className="center-modal" onClick={e => e.stopPropagation()}>
-            <div className="panel-header">
-              <h3><Trash2 size={16} /> Trash</h3>
-              <button className="panel-close" onClick={() => setShowTrash(false)}><X size={16} /></button>
+        <div className="fixed inset-0 z-[200] bg-[rgba(0,0,0,0.4)] backdrop-blur-[2px] flex animate-[fadeIn_0.15s_ease]" onClick={() => setShowTrash(false)}>
+          <div className="m-auto bg-bg-secondary border border-border-default rounded-lg shadow-xl w-[480px] max-w-[90vw] max-h-[85vh] flex flex-col animate-[fadeInUp_0.2s_ease] overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-muted bg-bg-tertiary">
+              <h3 className="text-[0.9375rem] font-semibold text-text-primary flex items-center gap-2"><Trash2 size={16} /> Trash</h3>
+              <button className="text-text-faint p-1 rounded-md flex cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => setShowTrash(false)}><X size={16} /></button>
             </div>
-            <div className="panel-body">
+            <div className="flex-1 overflow-y-auto p-0">
               {trash.length > 0 ? trash.map(t => (
-                <div key={t.id} className="trash-item">
-                  <FileText size={14} className="trash-icon" />
-                  <div className="trash-info">
-                    <span className="trash-title">{t.title}</span>
-                    <span className="trash-meta">Deleted by {t.deletedBy} · {t.deletedAgo}</span>
+                <div key={t.id} className="flex items-center gap-4 px-5 py-3 border-b border-border-muted">
+                  <FileText size={14} className="text-text-faint" />
+                  <div className="flex-1 flex flex-col">
+                    <span className="text-[0.875rem] text-text-primary">{t.title}</span>
+                    <span className="text-[0.75rem] text-text-faint">Deleted by {t.deletedBy} · {t.deletedAgo}</span>
                   </div>
-                  <button className="btn btn-ghost" onClick={() => restoreFromTrash(t.id)} title="Restore"><RotateCcw size={14} /></button>
-                  <button className="btn btn-ghost trash-delete" onClick={() => permanentDelete(t.id)} title="Delete forever"><X size={14} /></button>
+                  <button className="text-text-primary hover:bg-bg-elevated px-4 py-2 inline-flex items-center justify-center font-medium rounded-md transition-colors whitespace-nowrap gap-2 text-sm" onClick={() => restoreFromTrash(t.id)} title="Restore"><RotateCcw size={14} /></button>
+                  <button className="text-text-primary hover:bg-[rgba(218,54,51,0.1)] hover:text-status-red px-4 py-2 inline-flex items-center justify-center font-medium rounded-md transition-colors whitespace-nowrap gap-2 text-sm" onClick={() => permanentDelete(t.id)} title="Delete forever"><X size={14} /></button>
                 </div>
-              )) : <div className="modal-empty">Trash is empty.</div>}
+              )) : <div className="p-8 text-center text-[0.8125rem] text-text-faint">Trash is empty.</div>}
             </div>
           </div>
         </div>
@@ -568,24 +567,24 @@ export default function DashboardPage() {
 
       {/* Help & Shortcuts */}
       {showHelp && (
-        <div className="modal-overlay" onClick={() => setShowHelp(false)}>
-          <div className="center-modal wide" onClick={e => e.stopPropagation()}>
-            <div className="panel-header">
-              <h3><Keyboard size={16} /> Keyboard Shortcuts</h3>
-              <button className="panel-close" onClick={() => setShowHelp(false)}><X size={16} /></button>
+        <div className="fixed inset-0 z-[200] bg-[rgba(0,0,0,0.4)] backdrop-blur-[2px] flex animate-[fadeIn_0.15s_ease]" onClick={() => setShowHelp(false)}>
+          <div className="m-auto bg-bg-secondary border border-border-default rounded-lg shadow-xl w-[640px] max-w-[90vw] max-h-[85vh] flex flex-col animate-[fadeInUp_0.2s_ease] overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-muted bg-bg-tertiary">
+              <h3 className="text-[0.9375rem] font-semibold text-text-primary flex items-center gap-2"><Keyboard size={16} /> Keyboard Shortcuts</h3>
+              <button className="text-text-faint p-1 rounded-md flex cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => setShowHelp(false)}><X size={16} /></button>
             </div>
-            <div className="panel-body shortcuts-body">
+            <div className="flex-1 overflow-y-auto p-6 grid grid-cols-2 gap-8 bg-bg-primary">
               {keyboardShortcuts.map((cat, i) => (
-                <div key={i} className="shortcut-category">
-                  <h4 className="shortcut-cat-title">
-                    {cat.icon && <cat.icon size={14} className="shortcut-cat-icon" />}
+                <div key={i} className="flex flex-col gap-0.5">
+                  <h4 className="flex items-center gap-2 text-[0.75rem] font-semibold text-text-primary uppercase tracking-[0.05em] mb-2 border-b border-border-default pb-2">
+                    {cat.icon && <cat.icon size={14} className="text-status-blue" />}
                     {cat.category}
                   </h4>
                   {cat.shortcuts.map((s, j) => (
-                    <div key={j} className="shortcut-row">
-                      <span className="shortcut-desc">{s.description}</span>
-                      <div className="shortcut-keys">
-                        {s.keys.map((k, ki) => <kbd key={ki} className="kbd">{k}</kbd>)}
+                    <div key={j} className="flex items-center justify-between px-3 py-2 rounded-md transition-all duration-150 hover:bg-bg-elevated -mx-3 group">
+                      <span className="text-[0.8125rem] text-text-secondary group-hover:text-text-primary">{s.description}</span>
+                      <div className="flex gap-1">
+                        {s.keys.map((k, ki) => <kbd key={ki} className="px-2 py-1 rounded-md bg-[linear-gradient(180deg,var(--color-bg-tertiary)_0%,var(--color-bg-primary)_100%)] border border-border-default border-b-border-muted shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.4)] text-[0.6875rem] font-medium text-text-primary inline-flex items-center justify-center min-w-[24px]">{k}</kbd>)}
                       </div>
                     </div>
                   ))}
@@ -598,34 +597,35 @@ export default function DashboardPage() {
 
       {/* AI Chat Panel */}
       {showAI && (
-        <div className="modal-overlay" onClick={() => setShowAI(false)}>
-          <div className="side-panel right ai-panel" onClick={e => e.stopPropagation()}>
-            <div className="panel-header">
-              <h3><Sparkles size={16} /> Ask AI</h3>
-              <button className="panel-close" onClick={() => setShowAI(false)}><X size={16} /></button>
+        <div className="fixed inset-0 z-[200] bg-[rgba(0,0,0,0.4)] backdrop-blur-[2px] flex animate-[fadeIn_0.15s_ease]" onClick={() => setShowAI(false)}>
+          <div className="w-[380px] max-w-[90vw] h-screen ml-auto bg-bg-primary border-l border-border-default shadow-xl flex flex-col animate-[slideInRight_0.2s_ease]" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-muted bg-bg-tertiary">
+              <h3 className="text-[0.9375rem] font-semibold text-text-primary flex items-center gap-2"><Sparkles size={16} /> Ask AI</h3>
+              <button className="text-text-faint p-1 rounded-md flex cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => setShowAI(false)}><X size={16} /></button>
             </div>
-            <div className="ai-messages">
+            <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-6">
               {aiMessages.length === 0 && (
-                <div className="ai-welcome">
-                  <Bot size={32} className="ai-welcome-icon" />
+                <div className="flex flex-col items-center text-center gap-4 py-8 text-text-muted text-[0.875rem] leading-[1.6]">
+                  <Bot size={32} className="text-status-purple" />
                   <p>Hi! I can help you with this document. Try asking me to summarize, find action items, or suggest improvements.</p>
                 </div>
               )}
               {aiMessages.map((msg, i) => (
-                <div key={i} className={`ai-msg ${msg.role}`}>
-                  <div className="ai-msg-avatar">
+                <div key={i} className={`flex gap-4 text-[0.875rem] leading-[1.6] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ${msg.role === 'ai' ? 'bg-[rgba(188,140,255,0.1)] text-status-purple' : 'bg-bg-elevated text-text-secondary'}`}>
                     {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
                   </div>
-                  <div className="ai-msg-text">{msg.text}</div>
+                  <div className={`px-4 py-3 rounded-md whitespace-pre-wrap ${msg.role === 'user' ? 'bg-status-blue text-white' : 'bg-bg-secondary text-text-primary'}`}>{msg.text}</div>
                 </div>
               ))}
-              {aiTyping && <div className="ai-msg ai"><div className="ai-msg-avatar"><Bot size={14} /></div><div className="ai-typing">Thinking<span className="typing-dots">...</span></div></div>}
+              {aiTyping && <div className="flex gap-4 text-[0.875rem] leading-[1.6]"><div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 bg-[rgba(188,140,255,0.1)] text-status-purple"><Bot size={14} /></div><div className="text-text-faint flex items-center">Thinking<span className="inline-block overflow-hidden align-bottom animate-[ellipsis_1.5s_infinite]">...</span></div></div>}
             </div>
-            <div className="ai-input-bar">
+            <div className="p-4 border-t border-border-muted flex gap-2 bg-bg-tertiary">
               <input ref={aiInputRef} type="text" placeholder="Ask about this document..." value={aiInput}
+                className="flex-1 bg-bg-primary border border-border-default rounded-md px-3.5 py-2.5 text-text-primary text-[0.875rem]"
                 onChange={e => setAiInput(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') handleAISend() }} />
-              <button className="ai-send-btn" onClick={handleAISend} disabled={!aiInput.trim() || aiTyping}>
+              <button className="bg-status-blue text-white border-none rounded-md w-10 flex items-center justify-center cursor-pointer transition-opacity duration-150 disabled:opacity-50 disabled:cursor-not-allowed" onClick={handleAISend} disabled={!aiInput.trim() || aiTyping}>
                 <Send size={16} />
               </button>
             </div>
@@ -635,31 +635,32 @@ export default function DashboardPage() {
 
       {/* Comments Panel */}
       {showComments && (
-        <div className="modal-overlay" onClick={() => setShowComments(false)}>
-          <div className="side-panel right" onClick={e => e.stopPropagation()}>
-            <div className="panel-header">
-              <h3><MessageSquare size={16} /> Comments ({comments.length})</h3>
-              <button className="panel-close" onClick={() => setShowComments(false)}><X size={16} /></button>
+        <div className="fixed inset-0 z-[200] bg-[rgba(0,0,0,0.4)] backdrop-blur-[2px] flex animate-[fadeIn_0.15s_ease]" onClick={() => setShowComments(false)}>
+          <div className="w-[380px] max-w-[90vw] h-screen ml-auto bg-bg-secondary border-l border-border-default shadow-xl flex flex-col animate-[slideInRight_0.2s_ease]" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-muted bg-bg-tertiary">
+              <h3 className="text-[0.9375rem] font-semibold text-text-primary flex items-center gap-2"><MessageSquare size={16} /> Comments ({comments.length})</h3>
+              <button className="text-text-faint p-1 rounded-md flex cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => setShowComments(false)}><X size={16} /></button>
             </div>
-            <div className="panel-body comments-body">
+            <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-6">
               {comments.map(c => (
-                <div key={c.id} className="comment-item">
-                  <div className="avatar avatar-sm" style={{ backgroundColor: c.color }}>{c.initials}</div>
-                  <div className="comment-content">
-                    <div className="comment-header">
-                      <span className="comment-author">{c.author}</span>
-                      <span className="comment-time">{c.time}</span>
+                <div key={c.id} className="flex gap-4">
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-[0.75rem] font-bold text-white flex-shrink-0" style={{ backgroundColor: c.color }}>{c.initials}</div>
+                  <div className="flex-1 bg-bg-elevated p-3 rounded-none rounded-r-md rounded-b-md border border-border-default">
+                    <div className="flex justify-between mb-1.5">
+                      <span className="text-[0.8125rem] font-semibold text-text-primary">{c.author}</span>
+                      <span className="text-[0.6875rem] text-text-faint">{c.time}</span>
                     </div>
-                    <p className="comment-text">{c.text}</p>
+                    <p className="text-[0.875rem] text-text-secondary leading-[1.5]">{c.text}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="comment-input-bar">
+            <div className="p-4 border-t border-border-muted flex gap-2 bg-bg-tertiary">
               <input type="text" placeholder="Add a comment..." value={newComment}
+                className="flex-1 bg-bg-primary border border-border-default rounded-md px-3.5 py-2.5 text-text-primary text-[0.875rem]"
                 onChange={e => setNewComment(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') handleAddComment() }} />
-              <button className="ai-send-btn" onClick={handleAddComment} disabled={!newComment.trim()}>
+              <button className="bg-status-blue text-white border-none rounded-md w-10 flex items-center justify-center cursor-pointer transition-opacity duration-150 disabled:opacity-50 disabled:cursor-not-allowed" onClick={handleAddComment} disabled={!newComment.trim()}>
                 <Send size={16} />
               </button>
             </div>
@@ -669,21 +670,21 @@ export default function DashboardPage() {
 
       {/* Version History Panel */}
       {showVersions && (
-        <div className="modal-overlay" onClick={() => setShowVersions(false)}>
-          <div className="side-panel right" onClick={e => e.stopPropagation()}>
-            <div className="panel-header">
-              <h3><Clock size={16} /> Version History</h3>
-              <button className="panel-close" onClick={() => setShowVersions(false)}><X size={16} /></button>
+        <div className="fixed inset-0 z-[200] bg-[rgba(0,0,0,0.4)] backdrop-blur-[2px] flex animate-[fadeIn_0.15s_ease]" onClick={() => setShowVersions(false)}>
+          <div className="w-[380px] max-w-[90vw] h-screen ml-auto bg-bg-secondary border-l border-border-default shadow-xl flex flex-col animate-[slideInRight_0.2s_ease]" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-muted bg-bg-tertiary">
+              <h3 className="text-[0.9375rem] font-semibold text-text-primary flex items-center gap-2"><Clock size={16} /> Version History</h3>
+              <button className="text-text-faint p-1 rounded-md flex cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => setShowVersions(false)}><X size={16} /></button>
             </div>
-            <div className="panel-body">
+            <div className="flex-1 overflow-y-auto p-0">
               {versionHistory.map(v => (
-                <div key={v.id} className="version-item" onClick={() => addToast(`Viewing version from ${v.time}.`, 'info')}>
-                  <div className="avatar avatar-sm" style={{ backgroundColor: v.color }}>{v.initials}</div>
-                  <div className="version-info">
-                    <span className="version-author">{v.author}</span>
-                    <span className="version-meta">{v.time} · {v.changes}</span>
+                <div key={v.id} className="flex items-center gap-4 px-5 py-3.5 border-b border-border-muted cursor-pointer transition-colors duration-150 hover:bg-bg-elevated" onClick={() => addToast(`Viewing version from ${v.time}.`, 'info')}>
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-[0.75rem] font-bold text-white flex-shrink-0" style={{ backgroundColor: v.color }}>{v.initials}</div>
+                  <div className="flex-1 flex flex-col">
+                    <span className="text-[0.875rem] font-medium text-text-primary">{v.author}</span>
+                    <span className="text-[0.75rem] text-text-faint">{v.time} · {v.changes}</span>
                   </div>
-                  <button className="btn btn-ghost"><RotateCcw size={13} /></button>
+                  <button className="text-text-primary hover:bg-bg-elevated px-2 py-1 inline-flex items-center justify-center font-medium rounded-md transition-colors whitespace-nowrap gap-2 text-sm"><RotateCcw size={13} /></button>
                 </div>
               ))}
             </div>
@@ -693,26 +694,26 @@ export default function DashboardPage() {
 
       {/* Share Modal */}
       {showShare && (
-        <div className="modal-overlay" onClick={() => setShowShare(false)}>
-          <div className="center-modal small" onClick={e => e.stopPropagation()}>
-            <div className="panel-header">
-              <h3><Share2 size={16} /> Share "{currentDoc.title}"</h3>
-              <button className="panel-close" onClick={() => setShowShare(false)}><X size={16} /></button>
+        <div className="fixed inset-0 z-[200] bg-[rgba(0,0,0,0.4)] backdrop-blur-[2px] flex animate-[fadeIn_0.15s_ease]" onClick={() => setShowShare(false)}>
+          <div className="m-auto bg-bg-secondary border border-border-default rounded-lg shadow-xl w-[380px] max-w-[90vw] max-h-[85vh] flex flex-col animate-[fadeInUp_0.2s_ease] overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-muted bg-bg-tertiary">
+              <h3 className="text-[0.9375rem] font-semibold text-text-primary flex items-center gap-2"><Share2 size={16} /> Share "{currentDoc.title}"</h3>
+              <button className="text-text-faint p-1 rounded-md flex cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => setShowShare(false)}><X size={16} /></button>
             </div>
-            <div className="panel-body share-body">
-              <div className="share-link-row">
-                <input type="text" className="input-plain" value={`https://notevo.app/doc/${activeNote}`} readOnly />
-                <button className="btn btn-primary" onClick={handleCopyLink}>
+            <div className="p-6">
+              <div className="flex gap-2 mb-8">
+                <input type="text" className="flex-1 bg-transparent border-none outline-none text-text-primary text-sm" value={`https://Netevo.app/doc/${activeNote}`} readOnly />
+                <button className="bg-accent-primary text-white hover:bg-accent-hover shadow-sm px-4 py-2 inline-flex items-center justify-center font-medium rounded-md transition-colors whitespace-nowrap gap-2 text-sm" onClick={handleCopyLink}>
                   {linkCopied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy</>}
                 </button>
               </div>
-              <div className="share-members">
-                <p className="share-members-label">People with access</p>
+              <div>
+                <p className="text-[0.75rem] font-semibold text-text-secondary uppercase tracking-[0.05em] mb-4">People with access</p>
                 {teamMembers.slice(0, 3).map((m, i) => (
-                  <div key={i} className="member-item compact">
-                    <div className="avatar avatar-sm" style={{ backgroundColor: m.color }}>{m.initials}</div>
-                    <span className="member-name">{m.name}</span>
-                    <span className="share-role">Can edit</span>
+                  <div key={i} className="flex items-center gap-4 py-2">
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-[0.75rem] font-bold text-white flex-shrink-0" style={{ backgroundColor: m.color }}>{m.initials}</div>
+                    <span className="text-[0.875rem] font-medium text-text-primary">{m.name}</span>
+                    <span className="ml-auto text-[0.8125rem] text-text-faint">Can edit</span>
                   </div>
                 ))}
               </div>
@@ -722,44 +723,44 @@ export default function DashboardPage() {
       )}
 
       {/* ======== LEFT SIDEBAR ======== */}
-      <aside className="sidebar">
-        <div className="sidebar-top">
-          <div className="sidebar-org" onClick={() => addToast('Acme Engineering — Business plan. 5 members, 47 documents.', 'info')}>
-            <div className="sidebar-org-icon">
+      <aside className="w-[240px] min-w-[240px] flex flex-col justify-between bg-bg-secondary border-r border-border-muted overflow-y-auto animate-[slideInLeft_0.4s_ease] max-md:w-full max-md:min-w-full max-md:max-h-[200px]">
+        <div className="p-6 pb-4 flex flex-col gap-1">
+          <div className="flex items-center gap-3 p-2 mb-4 pb-6 border-b border-border-muted cursor-pointer transition-colors duration-150 hover:bg-bg-elevated" onClick={() => addToast('Acme Engineering — Business plan. 5 members, 47 documents.', 'info')}>
+            <div className="w-7 h-7 flex items-center justify-center rounded-md bg-accent-primary text-white flex-shrink-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15)]">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4L12 8L20 4V16L12 20L4 16V4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/><path d="M12 8V20" stroke="currentColor" strokeWidth="2"/></svg>
             </div>
-            <div className="sidebar-org-info">
-              <span className="sidebar-org-name">Acme Engineering</span>
-              <span className="sidebar-org-plan">Business plan</span>
+            <div className="flex-1 min-w-0 flex flex-col">
+              <span className="text-[0.8125rem] font-semibold text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">Acme Engineering</span>
+              <span className="text-[0.6875rem] text-text-faint">Business plan</span>
             </div>
-            <ChevronDown size={14} className="sidebar-org-chevron" />
+            <ChevronDown size={14} className="text-text-faint flex-shrink-0" />
           </div>
 
-          <nav className="sidebar-nav">
+          <nav className="flex flex-col gap-0.5 mb-4 pb-4 border-b border-border-muted">
             <SidebarItem icon={Search} label="Search" onClick={() => setShowSearch(true)} />
             <SidebarItem icon={Inbox} label="Inbox" badge={unreadCount || null} onClick={() => setShowInbox(true)} />
             <SidebarItem icon={Sparkles} label="Ask AI" onClick={() => setShowAI(true)} />
             <SidebarItem icon={FilePlus} label="New doc" onClick={handleNewDoc} />
           </nav>
 
-          <div className="sidebar-section">
-            <div className="sidebar-section-header"><ChevronDown size={12} /><span>FAVORITES</span></div>
+          <div className="mb-4 pb-4 border-b border-border-muted">
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-[0.65rem] font-semibold text-text-muted uppercase tracking-[0.08em] cursor-pointer opacity-80 transition-opacity duration-150 hover:opacity-100 hover:text-text-secondary"><ChevronDown size={12} /><span>FAVORITES</span></div>
             {sidebarFavorites.map((item, i) => (
               <SidebarItem key={i} icon={FileText} label={item.title} active={activeNote === item.noteId} onClick={() => setActiveNote(item.noteId)} />
             ))}
           </div>
 
-          <div className="sidebar-section">
-            <div className="sidebar-section-header"><ChevronDown size={12} /><span>WORKSPACES</span></div>
+          <div className="mb-0 pb-0 border-none">
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-[0.65rem] font-semibold text-text-muted uppercase tracking-[0.08em] cursor-pointer opacity-80 transition-opacity duration-150 hover:opacity-100 hover:text-text-secondary"><ChevronDown size={12} /><span>WORKSPACES</span></div>
             {workspaces.map((ws, i) => (
               <div key={i}>
-                <div className="sidebar-workspace-item" onClick={() => toggleWorkspace(i)}>
+                <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[0.8125rem] text-text-secondary cursor-pointer transition-all duration-150 my-[1px] hover:bg-bg-elevated hover:text-text-primary" onClick={() => toggleWorkspace(i)}>
                   {ws.expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-                  <span className="workspace-dot" style={{ backgroundColor: ws.color }} />
+                  <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-[0_0_6px_currentColor] opacity-90" style={{ backgroundColor: ws.color }} />
                   <span>{ws.name}</span>
                 </div>
                 {ws.expanded && ws.children.map((child, j) => (
-                  <div key={j} className={`sidebar-workspace-child ${activeNote === child.noteId ? 'active' : ''}`} onClick={() => setActiveNote(child.noteId)}>
+                  <div key={j} className={`flex items-center gap-2 py-1.5 pr-2.5 pl-[34px] text-[0.8125rem] text-text-secondary cursor-pointer transition-all duration-150 whitespace-nowrap overflow-hidden text-ellipsis my-[1px] rounded-md hover:text-text-primary hover:bg-bg-elevated ${activeNote === child.noteId ? 'bg-[rgba(255,255,255,0.06)] text-text-primary font-medium' : ''}`} onClick={() => setActiveNote(child.noteId)}>
                     <FileText size={13} /><span>{child.title}</span>
                   </div>
                 ))}
@@ -768,23 +769,23 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="sidebar-bottom">
+        <div className="p-3 border-t border-border-muted flex flex-col gap-px">
           <SidebarItem icon={Users} label="Members" onClick={() => setShowMembers(true)} />
           <SidebarItem icon={Trash2} label="Trash" onClick={() => setShowTrash(true)} />
           <SidebarItem icon={HelpCircle} label="Help & shortcuts" onClick={() => setShowHelp(true)} />
-          <div className="sidebar-user-wrapper">
-            <div className="sidebar-user" onClick={() => setShowUserMenu(!showUserMenu)}>
-              <div className="avatar avatar-sm" style={{ backgroundColor: 'var(--avatar-yo)' }}>YO</div>
-              <div className="sidebar-user-info">
-                <span className="sidebar-user-name">You</span>
-                <span className="sidebar-user-email">you@acme.dev</span>
+          <div className="relative">
+            <div className="flex items-center gap-3 p-3 rounded-md cursor-pointer transition-colors duration-150 mt-1 hover:bg-bg-elevated" onClick={() => setShowUserMenu(!showUserMenu)}>
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-[0.75rem] font-bold text-white flex-shrink-0" style={{ backgroundColor: 'var(--color-avatar-yo)' }}>YO</div>
+              <div className="flex-1 min-w-0 flex flex-col">
+                <span className="text-[0.8125rem] font-medium text-text-primary">You</span>
+                <span className="text-[0.6875rem] text-text-faint">you@acme.dev</span>
               </div>
-              <ChevronDown size={14} className="sidebar-user-chevron" />
+              <ChevronDown size={14} className="text-text-faint" />
             </div>
             {showUserMenu && (
-              <div className="user-dropdown">
-                <div className="user-dropdown-item" onClick={() => { setShowUserMenu(false); addToast('Profile: you@acme.dev — Engineer at Acme Engineering.', 'info') }}><Settings size={14} /> Settings</div>
-                <div className="user-dropdown-item logout" onClick={handleLogout}><LogOut size={14} /> Log out</div>
+              <div className="absolute bottom-[calc(100%+6px)] left-0 right-0 bg-bg-elevated border border-border-default rounded-md shadow-lg z-[100] overflow-hidden animate-[fadeInUp_0.15s_ease]">
+                <div className="flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] text-text-secondary cursor-pointer transition-all duration-150 hover:bg-bg-tertiary hover:text-text-primary" onClick={() => { setShowUserMenu(false); addToast('Profile: you@acme.dev — Engineer at Acme Engineering.', 'info') }}><Settings size={14} /> Settings</div>
+                <div className="flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] cursor-pointer transition-all duration-150 text-status-red border-t border-border-muted hover:bg-[rgba(218,54,51,0.1)] hover:text-status-red" onClick={handleLogout}><LogOut size={14} /> Log out</div>
               </div>
             )}
           </div>
@@ -792,124 +793,124 @@ export default function DashboardPage() {
       </aside>
 
       {/* ======== MIDDLE PANEL ======== */}
-      <div className="notes-panel">
-        <div className="notes-header">
-          <h2 className="notes-title">All notes</h2>
-          <button className="btn btn-ghost notes-new-btn" onClick={handleNewDoc}><Plus size={14} /> New</button>
+      <div className="w-[320px] min-w-[320px] flex flex-col border-r border-border-muted bg-bg-primary animate-[fadeIn_0.4s_ease] max-lg:w-[280px] max-lg:min-w-[280px] max-md:w-full max-md:min-w-full max-md:max-h-[300px]">
+        <div className="flex items-center justify-between p-6 pb-3">
+          <h2 className="text-[0.9375rem] font-semibold text-text-primary">All notes</h2>
+          <button className="text-text-muted hover:bg-bg-elevated hover:text-text-primary px-3 py-1.5 inline-flex items-center justify-center font-medium rounded-md transition-colors whitespace-nowrap gap-1 text-[0.8125rem]" onClick={handleNewDoc}><Plus size={14} /> New</button>
         </div>
-        <div className="notes-search">
-          <Search size={14} className="notes-search-icon" />
-          <input type="text" placeholder="Filter notes..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-          {searchQuery && <button className="notes-search-clear" onClick={() => setSearchQuery('')}><X size={12} /></button>}
+        <div className="flex items-center gap-3 mx-6 mb-3 px-3 py-2 rounded-md bg-bg-secondary border border-border-muted">
+          <Search size={14} className="text-text-faint flex-shrink-0" />
+          <input type="text" className="flex-1 bg-transparent border-none outline-none text-[0.8125rem] text-text-primary placeholder:text-text-faint" placeholder="Filter notes..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+          {searchQuery && <button className="text-text-faint p-0.5 rounded cursor-pointer transition-colors duration-150 hover:bg-bg-elevated hover:text-text-primary flex" onClick={() => setSearchQuery('')}><X size={12} /></button>}
         </div>
-        <div className="notes-filters">
+        <div className="flex items-center gap-0.5 px-6 pb-3 border-b border-border-muted overflow-x-auto">
           {filterTabs.map(tab => (
-            <button key={tab} className={`notes-filter-tab ${activeFilter === tab ? 'active' : ''}`} onClick={() => setActiveFilter(tab)}>{tab}</button>
+            <button key={tab} className={`px-2.5 py-1.5 rounded-md text-[0.75rem] font-medium bg-transparent border-none cursor-pointer transition-colors duration-150 whitespace-nowrap flex items-center gap-1 ${activeFilter === tab ? 'text-text-primary bg-bg-elevated' : 'text-text-faint hover:text-text-muted hover:bg-bg-elevated'}`} onClick={() => setActiveFilter(tab)}>{tab}</button>
           ))}
-          <div className="sort-wrapper">
-            <button className="notes-filter-tab sort-btn" onClick={() => setShowSort(!showSort)}>
+          <div className="relative ml-auto">
+            <button className="px-2.5 py-1.5 rounded-md text-[0.75rem] font-medium bg-transparent border-none cursor-pointer transition-colors duration-150 whitespace-nowrap flex items-center gap-1 text-text-faint hover:text-text-muted hover:bg-bg-elevated" onClick={() => setShowSort(!showSort)}>
               <SlidersHorizontal size={13} /> Sort
             </button>
             {showSort && (
-              <div className="sort-dropdown">
-                <div className={`sort-option ${sortOrder === 'newest' ? 'active' : ''}`} onClick={() => handleSort('newest')}><ArrowDown size={13} /> Newest first</div>
-                <div className={`sort-option ${sortOrder === 'oldest' ? 'active' : ''}`} onClick={() => handleSort('oldest')}><ArrowUp size={13} /> Oldest first</div>
-                <div className={`sort-option ${sortOrder === 'title' ? 'active' : ''}`} onClick={() => handleSort('title')}>A–Z Title</div>
+              <div className="absolute top-[calc(100%+4px)] right-0 bg-bg-secondary border border-border-default rounded-md shadow-lg z-[100] min-w-[160px] overflow-hidden animate-[fadeInUp_0.1s_ease]">
+                <div className={`flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] cursor-pointer transition-colors duration-150 hover:bg-bg-elevated hover:text-text-primary ${sortOrder === 'newest' ? 'text-text-primary bg-bg-tertiary' : 'text-text-secondary'}`} onClick={() => handleSort('newest')}><ArrowDown size={13} /> Newest first</div>
+                <div className={`flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] cursor-pointer transition-colors duration-150 hover:bg-bg-elevated hover:text-text-primary ${sortOrder === 'oldest' ? 'text-text-primary bg-bg-tertiary' : 'text-text-secondary'}`} onClick={() => handleSort('oldest')}><ArrowUp size={13} /> Oldest first</div>
+                <div className={`flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] cursor-pointer transition-colors duration-150 hover:bg-bg-elevated hover:text-text-primary ${sortOrder === 'title' ? 'text-text-primary bg-bg-tertiary' : 'text-text-secondary'}`} onClick={() => handleSort('title')}>A–Z Title</div>
               </div>
             )}
           </div>
         </div>
-        <div className="notes-list">
+        <div className="flex-1 overflow-y-auto py-2">
           {filteredNotes.length > 0 ? filteredNotes.map(note => {
             const Icon = note.icon
             return (
-              <div key={note.id} className={`note-card ${activeNote === note.id ? 'active' : ''}`} onClick={() => setActiveNote(note.id)}>
-                <div className="note-card-icon"><Icon size={15} /></div>
-                <div className="note-card-body">
-                  <h4 className="note-card-title">{note.title}</h4>
-                  <p className="note-card-preview">{note.preview}</p>
-                  <div className="note-card-meta">
-                    <span className="note-card-tag">◦ {note.tag}</span>
-                    <span className="note-card-sep">·</span>
-                    <span className="note-card-time">{note.time}</span>
+              <div key={note.id} className={`flex gap-3 p-6 cursor-pointer border-l-[3px] transition-colors duration-150 relative ${activeNote === note.id ? 'bg-bg-secondary border-accent-primary' : 'border-transparent hover:bg-bg-secondary'}`} onClick={() => setActiveNote(note.id)}>
+                <div className="text-text-faint mt-0.5 flex-shrink-0"><Icon size={15} /></div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-[0.8125rem] font-semibold text-text-primary mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{note.title}</h4>
+                  <p className="text-[0.75rem] text-text-faint leading-[1.45] line-clamp-2 mb-1.5">{note.preview}</p>
+                  <div className="flex items-center gap-1.5 text-[0.6875rem] text-text-faint">
+                    <span className="text-text-faint">◦ {note.tag}</span>
+                    <span className="text-border-default">·</span>
+                    <span>{note.time}</span>
                   </div>
                 </div>
-                <div className="avatar avatar-sm note-card-avatar" style={{ backgroundColor: note.avatar.color }}>{note.avatar.initials}</div>
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-[0.75rem] font-bold text-white flex-shrink-0 mt-0.5" style={{ backgroundColor: note.avatar.color }}>{note.avatar.initials}</div>
               </div>
             )
-          }) : <div className="notes-empty">No notes match your filter.</div>}
+          }) : <div className="p-8 text-center text-[0.8125rem] text-text-faint">No notes match your filter.</div>}
         </div>
       </div>
 
       {/* ======== RIGHT PANEL ======== */}
       {currentDoc && (
-        <div className="editor-panel">
-          <div className="editor-topbar">
-            <div className="editor-search-bar" onClick={() => setShowSearch(true)} style={{ cursor: 'pointer' }}>
-              <Search size={15} className="editor-search-icon" />
-              <input type="text" placeholder="Search docs, people, commands..." readOnly style={{ cursor: 'pointer' }} />
-              <kbd className="kbd">⌘K</kbd>
+        <div className="flex-1 min-w-0 flex flex-col bg-bg-primary overflow-hidden relative max-md:fixed max-md:inset-0 max-md:z-[100] max-md:bg-bg-primary">
+          <div className="flex items-center justify-between h-[52px] min-h-[52px] px-6 border-b border-border-muted flex-shrink-0 bg-[rgba(13,13,13,0.8)] backdrop-blur-[12px] sticky top-0 z-[10] gap-4">
+            <div className="flex-1 max-w-[400px] flex items-center gap-2 px-3 py-1.5 rounded-md bg-bg-secondary border border-border-default cursor-pointer text-text-faint transition-colors duration-150 hover:bg-bg-elevated hover:text-text-secondary" onClick={() => setShowSearch(true)}>
+              <Search size={15} />
+              <input type="text" className="flex-1 bg-transparent border-none outline-none text-[0.8125rem] text-inherit placeholder:text-inherit pointer-events-none" placeholder="Search docs, people, commands..." readOnly />
+              <kbd className="px-1.5 py-0.5 rounded-[4px] bg-[linear-gradient(180deg,var(--color-bg-tertiary)_0%,var(--color-bg-primary)_100%)] border border-border-default border-b-border-muted shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.4)] text-[0.625rem] font-medium text-text-secondary">⌘K</kbd>
             </div>
-            <div className="editor-topbar-actions">
-              <button className="btn btn-ghost" onClick={() => setShowAI(true)}><Sparkles size={15} /> Ask AI</button>
-              <button className="btn btn-ghost" onClick={() => setShowHelp(true)}><HelpCircle size={15} /></button>
-              <button className="btn btn-ghost" onClick={() => { window.open(`/dashboard#doc-${activeNote}`, '_blank'); addToast('Opened in new tab.', 'info') }}><ArrowUpRight size={15} /></button>
+            <div className="flex items-center gap-2 flex-shrink-0 max-sm:hidden">
+              <button className="text-text-secondary hover:bg-bg-elevated hover:text-text-primary px-3 py-1.5 inline-flex items-center justify-center font-medium rounded-md transition-colors whitespace-nowrap gap-2 text-[0.8125rem]" onClick={() => setShowAI(true)}><Sparkles size={15} /> Ask AI</button>
+              <button className="text-text-secondary hover:bg-bg-elevated hover:text-text-primary w-8 h-8 inline-flex items-center justify-center rounded-md transition-colors" onClick={() => setShowHelp(true)}><HelpCircle size={15} /></button>
+              <button className="text-text-secondary hover:bg-bg-elevated hover:text-text-primary w-8 h-8 inline-flex items-center justify-center rounded-md transition-colors" onClick={() => { window.open(`/dashboard#doc-${activeNote}`, '_blank'); addToast('Opened in new tab.', 'info') }}><ArrowUpRight size={15} /></button>
             </div>
           </div>
 
-          <div className="editor-doc-header">
-            <div className="editor-breadcrumb">
+          <div className="flex items-center justify-between px-16 py-4 flex-shrink-0 flex-wrap gap-4 max-lg:px-8 max-sm:px-6">
+            <div className="flex items-center flex-wrap gap-2 text-[0.8125rem]">
               {currentDoc.breadcrumb.map((item, i) => (
-                <span key={i}>
-                  {i > 0 && <span className="breadcrumb-sep"> › </span>}
-                  <span className={`breadcrumb-item ${i === currentDoc.breadcrumb.length - 1 ? 'active' : ''}`}>{item}</span>
+                <span key={i} className="flex items-center gap-2">
+                  {i > 0 && <span className="text-text-faint">›</span>}
+                  <span className={`transition-colors duration-150 ${i === currentDoc.breadcrumb.length - 1 ? 'font-medium text-text-primary' : 'text-text-secondary cursor-pointer hover:text-text-primary hover:underline underline-offset-[3px]'}`}>{item}</span>
                 </span>
               ))}
             </div>
-            <div className="editor-doc-actions">
-              <span className="editor-saved"><Bookmark size={14} /> Saved</span>
-              <Star size={16} className={`editor-action-icon ${starred[activeNote] ? 'star' : ''}`}
-                fill={starred[activeNote] ? 'var(--color-orange)' : 'none'}
+            <div className="flex items-center gap-4 text-text-secondary max-sm:gap-2">
+              <span className="flex items-center gap-1.5 text-[0.75rem] text-text-faint max-sm:hidden"><Bookmark size={14} /> Saved</span>
+              <Star size={16} className={`cursor-pointer transition-colors duration-150 hover:text-text-primary ${starred[activeNote] ? 'text-status-orange hover:text-status-orange' : ''}`}
+                fill={starred[activeNote] ? 'currentColor' : 'none'}
                 onClick={() => { setStarred(p => ({ ...p, [activeNote]: !p[activeNote] })); addToast(starred[activeNote] ? 'Removed from favorites.' : 'Added to favorites!', 'info') }} />
-              <Clock size={16} className="editor-action-icon" onClick={() => setShowVersions(true)} />
-              <MessageSquare size={16} className="editor-action-icon" onClick={() => setShowComments(true)} />
-              <div className="avatar-group editor-collaborators">
-                {docCollaborators.map((a, i) => <div key={i} className="avatar avatar-xs" style={{ backgroundColor: a.color }}>{a.initials}</div>)}
+              <Clock size={16} className="cursor-pointer transition-colors duration-150 hover:text-text-primary" onClick={() => setShowVersions(true)} />
+              <MessageSquare size={16} className="cursor-pointer transition-colors duration-150 hover:text-text-primary" onClick={() => setShowComments(true)} />
+              <div className="flex items-center ml-2 max-sm:hidden">
+                {docCollaborators.map((a, i) => <div key={i} className="w-6 h-6 rounded-full flex items-center justify-center text-[0.625rem] font-bold text-white shadow-[0_0_0_2px_var(--color-bg-primary)] -ml-2 first:ml-0 relative z-[1]" style={{ backgroundColor: a.color }}>{a.initials}</div>)}
               </div>
-              <button className="btn btn-primary editor-share-btn" onClick={() => setShowShare(true)}><Share2 size={14} /> Share</button>
-              <div className="more-wrapper">
-                <MoreHorizontal size={16} className="editor-action-icon" onClick={() => setShowMore(!showMore)} />
+              <button className="bg-accent-primary text-white hover:bg-accent-hover shadow-sm px-3 py-1.5 inline-flex items-center justify-center font-medium rounded-md transition-colors whitespace-nowrap gap-1.5 text-[0.8125rem]" onClick={() => setShowShare(true)}><Share2 size={14} /> Share</button>
+              <div className="relative">
+                <MoreHorizontal size={16} className="cursor-pointer transition-colors duration-150 hover:text-text-primary" onClick={() => setShowMore(!showMore)} />
                 {showMore && (
-                  <div className="more-dropdown">
-                    <div className="more-option" onClick={handleExport}><Download size={14} /> Export as Markdown</div>
-                    <div className="more-option" onClick={handleDuplicate}><Files size={14} /> Duplicate</div>
-                    <div className="more-option danger" onClick={handleMoveToTrash}><Trash size={14} /> Move to trash</div>
+                  <div className="absolute top-[calc(100%+8px)] right-0 bg-bg-secondary border border-border-default rounded-md shadow-lg z-[100] min-w-[180px] overflow-hidden animate-[fadeInUp_0.1s_ease]">
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] text-text-secondary cursor-pointer transition-colors duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={handleExport}><Download size={14} /> Export as Markdown</div>
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] text-text-secondary cursor-pointer transition-colors duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={handleDuplicate}><Files size={14} /> Duplicate</div>
+                    <div className="flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] cursor-pointer transition-colors duration-150 text-status-red border-t border-border-muted hover:bg-[rgba(218,54,51,0.1)] hover:text-status-red" onClick={handleMoveToTrash}><Trash size={14} /> Move to trash</div>
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="editor-content">
-            <div className="editor-author">
-              <div className="avatar avatar-sm" style={{ backgroundColor: currentDoc.author.color }}>{currentDoc.author.initials}</div>
-              <span className="editor-author-name">{currentDoc.author.name}</span>
-              <span className="editor-author-sep">·</span>
-              <span className="editor-author-time">Updated {currentDoc.updatedAgo}</span>
-              {currentDoc.editingNow > 0 && <><span className="editor-author-sep">·</span><span className="editor-editing-badge">● {currentDoc.editingNow} editing now</span></>}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden px-16 py-8 pb-32 scroll-smooth max-lg:px-8 max-sm:px-6">
+            <div className="flex items-center gap-2 mb-8 animate-[fadeInUp_0.4s_ease]">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-[0.75rem] font-bold text-white flex-shrink-0" style={{ backgroundColor: currentDoc.author.color }}>{currentDoc.author.initials}</div>
+              <span className="text-[0.8125rem] font-medium text-text-primary">{currentDoc.author.name}</span>
+              <span className="text-[0.8125rem] text-text-faint">·</span>
+              <span className="text-[0.8125rem] text-text-faint">Updated {currentDoc.updatedAgo}</span>
+              {currentDoc.editingNow > 0 && <><span className="text-[0.8125rem] text-text-faint">·</span><span className="text-[0.6875rem] font-semibold text-status-orange bg-[rgba(217,119,6,0.15)] px-2 py-0.5 rounded-full uppercase tracking-[0.05em] flex items-center gap-1.5 animate-[pulse_2s_infinite]">● {currentDoc.editingNow} editing now</span></>}
             </div>
-            <article className="editor-doc-body">
-              <h1 className="doc-title">{currentDoc.title}</h1>
+            <article className="max-w-[760px] mx-auto animate-[fadeInUp_0.5s_ease]">
+              <h1 className="text-[2.5rem] font-bold text-text-primary leading-[1.2] tracking-[-0.02em] mb-10 max-sm:text-[2rem]">{currentDoc.title}</h1>
               {currentDoc.content.map((block, i) => {
                 switch (block.type) {
-                  case 'paragraph': return <p key={i} className="doc-paragraph">{block.text}</p>
-                  case 'heading': return <h2 key={i} className="doc-heading-2">{block.text}</h2>
-                  case 'callout': return <div key={i} className="doc-callout"><span className="doc-callout-icon">{block.icon}</span><p>{block.text}</p></div>
-                  case 'bullet': return <div key={i} className="doc-check-item"><span className="doc-bullet" />{block.text}</div>
+                  case 'paragraph': return <p key={i} className="text-[1.0625rem] leading-[1.7] text-[var(--color-text-doc)] mb-6 last:mb-0 max-sm:text-base">{block.text}</p>
+                  case 'heading': return <h2 key={i} className="text-[1.5rem] font-semibold text-text-primary leading-[1.3] mt-10 mb-4 tracking-[-0.01em] pb-2 border-b border-border-muted">{block.text}</h2>
+                  case 'callout': return <div key={i} className="flex gap-4 p-4 rounded-lg bg-[rgba(59,130,246,0.1)] border border-[rgba(59,130,246,0.2)] mb-6 text-[0.9375rem] leading-[1.6] text-text-primary"><span className="text-xl leading-none flex-shrink-0">{block.icon}</span><p className="m-0">{block.text}</p></div>
+                  case 'bullet': return <div key={i} className="flex gap-3 text-[1.0625rem] leading-[1.7] text-[var(--color-text-doc)] mb-2.5 max-sm:text-base"><span className="w-1.5 h-1.5 rounded-full bg-[var(--color-text-doc)] mt-[0.55rem] flex-shrink-0 opacity-60" />{block.text}</div>
                   case 'check': return (
-                    <div key={i} className={`doc-check-item ${block.checked ? 'checked' : ''}`} onClick={() => toggleCheck(block.id)} style={{ cursor: 'pointer' }}>
-                      {block.checked ? <CheckSquare size={16} className="doc-check-icon checked" /> : <Square size={16} className="doc-check-icon" />}
-                      {block.text}
+                    <div key={i} className={`flex gap-3 text-[1.0625rem] leading-[1.7] mb-2.5 items-start cursor-pointer transition-colors duration-150 select-none max-sm:text-base group ${block.checked ? 'text-text-faint line-through' : 'text-[var(--color-text-doc)] hover:text-text-primary'}`} onClick={() => toggleCheck(block.id)}>
+                      {block.checked ? <CheckSquare size={16} className="mt-[0.35rem] flex-shrink-0 text-accent-primary" /> : <Square size={16} className="mt-[0.35rem] flex-shrink-0 text-text-muted group-hover:text-text-primary" />}
+                      <span className="pt-[1px]">{block.text}</span>
                     </div>
                   )
                   default: return null
@@ -925,9 +926,9 @@ export default function DashboardPage() {
 
 function SidebarItem({ icon: Icon, label, badge, onClick, active }) {
   return (
-    <div className={`sidebar-item ${active ? 'active' : ''}`} onClick={onClick}>
-      <Icon size={15} /><span>{label}</span>
-      {badge && <span className="badge">{badge}</span>}
+    <div className={`flex items-center gap-3 px-3 py-2 rounded-md text-[0.875rem] font-medium cursor-pointer transition-colors duration-150 mx-2 my-0.5 select-none ${active ? 'bg-bg-elevated text-text-primary' : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary'}`} onClick={onClick}>
+      <Icon size={16} className={active ? 'text-text-primary' : 'text-text-muted'} /><span>{label}</span>
+      {badge && <span className="ml-auto bg-accent-primary text-white text-[0.6875rem] font-semibold px-2 py-[0.125rem] rounded-full min-w-[20px] text-center">{badge}</span>}
     </div>
   )
 }

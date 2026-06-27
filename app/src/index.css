@@ -1,140 +1,55 @@
-/* ============================================================
-   Notevo Design System
-   Dark theme matching the reference screenshots
-   ============================================================ */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
 
-/* ---- CSS Custom Properties ---- */
-:root {
+@theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
   /* Core backgrounds */
-  --bg-primary: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-tertiary: #1c2128;
-  --bg-elevated: #21262d;
-  --bg-surface: #0d1117;
-
-  /* Auth panel gradient */
-  --auth-left-bg: linear-gradient(135deg, #1a1c2e 0%, #1e1520 40%, #201218 100%);
+  --color-bg-primary: #0d1117;
+  --color-bg-secondary: #161b22;
+  --color-bg-tertiary: #1c2128;
+  --color-bg-elevated: #21262d;
+  --color-bg-surface: #0d1117;
 
   /* Borders */
-  --border-default: #30363d;
-  --border-muted: #21262d;
-  --border-subtle: rgba(240, 246, 252, 0.1);
+  --color-border-default: #30363d;
+  --color-border-muted: #21262d;
+  --color-border-subtle: rgba(240, 246, 252, 0.1);
 
   /* Text */
-  --text-primary: #f0f6fc;
-  --text-secondary: #c9d1d9;
-  --text-muted: #8b949e;
-  --text-faint: #6e7681;
+  --color-text-primary: #f0f6fc;
+  --color-text-secondary: #c9d1d9;
+  --color-text-muted: #8b949e;
+  --color-text-faint: #6e7681;
 
   /* Accent colors */
-  --accent-primary: #7c5cbf;
-  --accent-gradient: linear-gradient(135deg, #7c5cbf 0%, #6a4fb5 50%, #5a3fa5 100%);
-  --accent-hover: #8b6dcf;
+  --color-accent-primary: #7c5cbf;
+  --color-accent-hover: #8b6dcf;
 
   /* Status colors */
-  --color-green: #3fb950;
-  --color-red: #da3633;
-  --color-orange: #d29922;
-  --color-blue: #58a6ff;
-  --color-teal: #39d2c0;
-  --color-purple: #bc8cff;
+  --color-status-green: #3fb950;
+  --color-status-red: #da3633;
+  --color-status-orange: #d29922;
+  --color-status-blue: #58a6ff;
+  --color-status-teal: #39d2c0;
+  --color-status-purple: #bc8cff;
 
   /* Avatar colors */
-  --avatar-mc: #3fb950;
-  --avatar-dp: #da3633;
-  --avatar-sk: #39d2c0;
-  --avatar-np: #d29922;
-  --avatar-yo: #d29922;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
-
-  /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
-  --space-3xl: 64px;
-
-  /* Border radius */
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-full: 9999px;
-
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
-  --transition-slow: 400ms ease;
-
-  /* Font */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --color-avatar-mc: #3fb950;
+  --color-avatar-dp: #da3633;
+  --color-avatar-sk: #39d2c0;
+  --color-avatar-np: #d29922;
+  --color-avatar-yo: #d29922;
 }
 
-/* ---- Global Resets ---- */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  font-family: var(--font-family);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-#root {
-  min-height: 100vh;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-ul, ol {
-  list-style: none;
-}
-
-button {
-  font-family: var(--font-family);
-  cursor: pointer;
-  border: none;
-  background: none;
-  color: inherit;
-}
-
-input {
-  font-family: var(--font-family);
-  background: none;
-  border: none;
-  color: inherit;
-  outline: none;
-}
-
-img {
-  display: block;
-  max-width: 100%;
+@layer base {
+  body {
+    @apply bg-bg-primary text-text-primary min-h-screen overflow-x-hidden;
+  }
+  
+  #root {
+    @apply min-h-screen;
+  }
 }
 
 /* ---- Scrollbar Styling ---- */
@@ -148,309 +63,40 @@ img {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-default);
-  border-radius: var(--radius-full);
+  background: #30363d;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-faint);
+  background: #484f58;
 }
 
-/* ---- Typography Utilities ---- */
-.text-xs { font-size: 0.75rem; }
-.text-sm { font-size: 0.8125rem; }
-.text-base { font-size: 0.875rem; }
-.text-md { font-size: 1rem; }
-.text-lg { font-size: 1.125rem; }
-.text-xl { font-size: 1.25rem; }
-.text-2xl { font-size: 1.5rem; }
-.text-3xl { font-size: 2rem; }
-.text-4xl { font-size: 2.5rem; }
-.text-5xl { font-size: 3rem; }
-
-.font-light { font-weight: 300; }
-.font-normal { font-weight: 400; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
-
-.text-muted { color: var(--text-muted); }
-.text-secondary { color: var(--text-secondary); }
-
-/* ---- Button Styles ---- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all var(--transition-fast);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.btn-primary {
-  background: var(--accent-gradient);
-  color: white;
-  border: none;
-  font-weight: 600;
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(124, 92, 191, 0.3);
-}
-
-.btn-outline {
+::-webkit-scrollbar-corner {
   background: transparent;
-  border: 1px solid var(--border-default);
-  color: var(--text-primary);
 }
 
-.btn-outline:hover {
-  background: var(--bg-elevated);
-  border-color: var(--text-faint);
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-  padding: 6px 12px;
-}
-
-.btn-ghost:hover {
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-}
-
-.btn-full {
-  width: 100%;
-}
-
-.btn-lg {
-  padding: 12px 24px;
-  font-size: 0.9375rem;
-}
-
-/* ---- Input Styles ---- */
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.input-group label {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  background: var(--bg-primary);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  transition: border-color var(--transition-fast);
-}
-
-.input-wrapper:focus-within {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 2px rgba(124, 92, 191, 0.15);
-}
-
-.input-wrapper .input-icon {
-  color: var(--text-faint);
-  flex-shrink: 0;
-}
-
-.input-wrapper input {
-  flex: 1;
-  font-size: 0.875rem;
-  color: var(--text-primary);
-}
-
-.input-wrapper input::placeholder {
-  color: var(--text-faint);
-}
-
-/* Plain input without icon wrapper */
-.input-plain {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  font-size: 0.875rem;
-  color: var(--text-primary);
-  width: 100%;
-  transition: border-color var(--transition-fast);
-}
-
-.input-plain:focus {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 2px rgba(124, 92, 191, 0.15);
-}
-
-.input-plain::placeholder {
-  color: var(--text-faint);
-}
-
-/* ---- Divider ---- */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  margin: var(--space-lg) 0;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border-default);
-}
-
-.divider span {
-  font-size: 0.75rem;
-  color: var(--text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* ---- Avatar Circles ---- */
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: white;
-  flex-shrink: 0;
-}
-
-.avatar-sm {
-  width: 24px;
-  height: 24px;
-  font-size: 0.5625rem;
-}
-
-.avatar-xs {
-  width: 20px;
-  height: 20px;
-  font-size: 0.5rem;
-}
-
-.avatar-group {
-  display: flex;
-  align-items: center;
-}
-
-.avatar-group .avatar {
-  margin-left: -6px;
-  border: 2px solid var(--bg-primary);
-}
-
-.avatar-group .avatar:first-child {
-  margin-left: 0;
-}
-
-/* ---- Badge ---- */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: var(--radius-full);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  background: var(--accent-primary);
-  color: white;
-}
-
-/* ---- Tag ---- */
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  font-size: 0.6875rem;
-  font-weight: 500;
-}
-
-/* ---- Animations ---- */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease forwards;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease forwards;
-}
-
-.animate-slide-left {
-  animation: slideInLeft 0.5s ease forwards;
-}
-
-.animate-slide-right {
-  animation: slideInRight 0.5s ease forwards;
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
 }
