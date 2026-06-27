@@ -1,24 +1,44 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Mail, Lock, ArrowRight } from 'lucide-react'
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react'
 import { useToast } from '../components/Toast'
+import { useAuth } from '../context/AuthContext'
 import AuthLayout from '../layouts/AuthLayout'
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const { addToast } = useToast()
+  const { login, isAuthenticated } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e) => {
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    navigate('/dashboard', { replace: true })
+    return null
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!email || !password) {
       addToast('Please fill in all fields.', 'warning')
       return
     }
-    addToast('Signed in successfully!', 'success')
-    setTimeout(() => navigate('/dashboard'), 400)
+
+    setIsLoading(true)
+    try {
+      await login({ email, password })
+      addToast('Signed in successfully!', 'success')
+      navigate('/dashboard')
+    } catch (error) {
+      const message =
+        error.response?.data?.error || 'Login failed. Please try again.'
+      addToast(message, 'error')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleGoogleLogin = () => {
@@ -80,6 +100,7 @@ export default function LoginPage() {
                 placeholder="you@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -95,6 +116,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -112,8 +134,20 @@ export default function LoginPage() {
             <a href="#" className="text-[0.8125rem] text-text-muted transition-colors hover:text-text-primary" onClick={handleForgotPassword}>Forgot password?</a>
           </div>
 
-          <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[0.9375rem] font-medium rounded-md bg-accent-primary text-white shadow-sm transition-all hover:bg-accent-hover">
-            Sign in <ArrowRight size={16} />
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[0.9375rem] font-medium rounded-md bg-accent-primary text-white shadow-sm transition-all hover:bg-accent-hover disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 size={16} className="animate-spin" /> Signing in…
+              </>
+            ) : (
+              <>
+                Sign in <ArrowRight size={16} />
+              </>
+            )}
           </button>
         </form>
 

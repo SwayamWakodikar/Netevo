@@ -1,28 +1,48 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Mail, Lock, ArrowRight } from 'lucide-react'
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react'
 import { useToast } from '../components/Toast'
+import { useAuth } from '../context/AuthContext'
 import AuthLayout from '../layouts/AuthLayout'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
   const { addToast } = useToast()
+  const { signup, isAuthenticated } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e) => {
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    navigate('/dashboard', { replace: true })
+    return null
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!name || !email || !password) {
       addToast('Please fill in all fields.', 'warning')
       return
     }
-    if (password.length < 6) {
-      addToast('Password must be at least 6 characters.', 'warning')
+    if (password.length < 8) {
+      addToast('Password must be at least 8 characters.', 'warning')
       return
     }
-    addToast(`Account created for ${name}!`, 'success')
-    setTimeout(() => navigate('/dashboard'), 400)
+
+    setIsLoading(true)
+    try {
+      await signup({ email, username: name, password })
+      addToast(`Account created for ${name}!`, 'success')
+      navigate('/dashboard')
+    } catch (error) {
+      const message =
+        error.response?.data?.error || 'Registration failed. Please try again.'
+      addToast(message, 'error')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleGoogleLogin = () => {
@@ -69,14 +89,15 @@ export default function RegisterPage() {
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="register-name" className="text-[0.8125rem] font-medium text-text-secondary">Full name</label>
+            <label htmlFor="register-name" className="text-[0.8125rem] font-medium text-text-secondary">Username</label>
             <input
               id="register-name"
               type="text"
               className="w-full bg-bg-elevated border border-border-default rounded-md px-3 py-2 text-sm text-text-primary placeholder:text-text-faint transition-colors focus:border-accent-primary focus:ring-1 focus:ring-accent-primary focus:outline-none"
-              placeholder="Jane Doe"
+              placeholder="janedoe"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              disabled={isLoading}
             />
           </div>
 
@@ -91,6 +112,7 @@ export default function RegisterPage() {
                 placeholder="you@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
             </div>
           </div>
@@ -106,12 +128,26 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
             </div>
+            <p className="text-xs text-text-faint">Must be at least 8 characters</p>
           </div>
 
-          <button type="submit" className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[0.9375rem] font-medium rounded-md bg-accent-primary text-white shadow-sm transition-all hover:bg-accent-hover">
-            Create account <ArrowRight size={16} />
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[0.9375rem] font-medium rounded-md bg-accent-primary text-white shadow-sm transition-all hover:bg-accent-hover disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 size={16} className="animate-spin" /> Creating account…
+              </>
+            ) : (
+              <>
+                Create account <ArrowRight size={16} />
+              </>
+            )}
           </button>
         </form>
 
