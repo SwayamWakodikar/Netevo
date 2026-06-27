@@ -1,1 +1,31 @@
+name: Build Auth Service
 
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'services/auth-service/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'services/auth-service/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Build
+        working-directory: services/auth-service
+        run: go build ./...
+
+      - name: Test
+        working-directory: services/auth-service
+        run: go test ./...

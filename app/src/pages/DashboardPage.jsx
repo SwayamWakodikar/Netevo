@@ -9,6 +9,7 @@ import {
   ArrowDown, ArrowUp, Navigation, Edit2, LayoutDashboard
 } from 'lucide-react'
 import { useToast } from '../components/Toast'
+import { useAuth } from '../context/AuthContext'
 
 /* ================================================================
    DUMMY DATA
@@ -141,13 +142,7 @@ const initialNotifications = [
   { id: 5, text: 'Weekly Eng Sync starts in 30 minutes', time: '1d ago', read: true, noteId: 3 },
 ]
 
-const teamMembers = [
-  { initials: 'MC', color: 'var(--avatar-mc)', name: 'Maya Chen', role: 'Product Lead', email: 'maya@acme.dev', status: 'online' },
-  { initials: 'DP', color: 'var(--avatar-dp)', name: 'David Park', role: 'Staff Engineer', email: 'david@acme.dev', status: 'online' },
-  { initials: 'SK', color: 'var(--avatar-sk)', name: 'Sarah Kim', role: 'Design Lead', email: 'sarah@acme.dev', status: 'away' },
-  { initials: 'YO', color: 'var(--avatar-yo)', name: 'You', role: 'Engineer', email: 'you@acme.dev', status: 'online' },
-  { initials: 'NP', color: '#d29922', name: 'Nate Patel', role: 'DevOps Engineer', email: 'nate@acme.dev', status: 'offline' },
-]
+/* teamMembers is now derived from the logged-in user in the component */
 
 const trashItems = [
   { id: 't1', title: 'Draft: API versioning strategy', deletedBy: 'You', deletedAgo: '2d ago' },
@@ -225,11 +220,7 @@ const initialNotes = [
 ]
 
 const filterTabs = ['All', 'Docs', 'Specs', 'Meetings', 'Tasks']
-const docCollaborators = [
-  { initials: 'YO', color: 'var(--avatar-yo)' },
-  { initials: 'MC', color: 'var(--avatar-mc)' },
-  { initials: 'DP', color: 'var(--avatar-dp)' },
-]
+/* docCollaborators is now derived from the logged-in user in the component */
 
 /* ================================================================
    DASHBOARD COMPONENT
@@ -237,6 +228,14 @@ const docCollaborators = [
 export default function DashboardPage() {
   const navigate = useNavigate()
   const { addToast } = useToast()
+  const { user, logout } = useAuth()
+
+  // Derive user display info from auth context
+  const userInitials = user?.username
+    ? user.username.slice(0, 2).toUpperCase()
+    : user?.email?.slice(0, 2).toUpperCase() || 'U'
+  const userName = user?.username || user?.email || 'User'
+  const userEmail = user?.email || ''
   const aiInputRef = useRef(null)
 
   // Core state
@@ -449,9 +448,10 @@ export default function DashboardPage() {
     addToast(`"${currentDoc.title}" moved to trash.`, 'info')
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout()
     addToast('Signed out.', 'info')
-    setTimeout(() => navigate('/login'), 300)
+    navigate('/login')
   }
 
   /* ---- Sort handler ---- */
@@ -525,16 +525,15 @@ export default function DashboardPage() {
               <button className="text-text-faint p-1 rounded-md flex cursor-pointer transition-all duration-150 hover:bg-bg-elevated hover:text-text-primary" onClick={() => setShowMembers(false)}><X size={16} /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-0">
-              {teamMembers.map((m, i) => (
-                <div key={i} className="flex items-center gap-4 px-5 py-3 border-b border-border-muted">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-[0.8125rem] font-bold text-white flex-shrink-0" style={{ backgroundColor: m.color }}>{m.initials}</div>
-                  <div className="flex-1 flex flex-col">
-                    <span className="text-[0.875rem] font-medium text-text-primary">{m.name}</span>
-                    <span className="text-[0.75rem] text-text-faint">{m.role} · {m.email}</span>
-                  </div>
-                  <span className={`text-[0.6875rem] px-2 py-0.5 rounded-full bg-bg-elevated capitalize ${m.status === 'online' ? 'text-status-green' : m.status === 'away' ? 'text-status-orange' : 'text-text-faint'}`}>{m.status}</span>
+              {/* Current logged-in user */}
+              <div className="flex items-center gap-4 px-5 py-3 border-b border-border-muted">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-[0.8125rem] font-bold text-white flex-shrink-0 bg-accent-primary">{userInitials}</div>
+                <div className="flex-1 flex flex-col">
+                  <span className="text-[0.875rem] font-medium text-text-primary">{userName}</span>
+                  <span className="text-[0.75rem] text-text-faint">{userEmail}</span>
                 </div>
-              ))}
+                <span className="text-[0.6875rem] px-2 py-0.5 rounded-full bg-bg-elevated capitalize text-status-green">online</span>
+              </div>
             </div>
           </div>
         </div>
@@ -775,16 +774,16 @@ export default function DashboardPage() {
           <SidebarItem icon={HelpCircle} label="Help & shortcuts" onClick={() => setShowHelp(true)} />
           <div className="relative">
             <div className="flex items-center gap-3 p-3 rounded-md cursor-pointer transition-colors duration-150 mt-1 hover:bg-bg-elevated" onClick={() => setShowUserMenu(!showUserMenu)}>
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-[0.75rem] font-bold text-white flex-shrink-0" style={{ backgroundColor: 'var(--color-avatar-yo)' }}>YO</div>
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-[0.75rem] font-bold text-white flex-shrink-0 bg-accent-primary">{userInitials}</div>
               <div className="flex-1 min-w-0 flex flex-col">
-                <span className="text-[0.8125rem] font-medium text-text-primary">You</span>
-                <span className="text-[0.6875rem] text-text-faint">you@acme.dev</span>
+                <span className="text-[0.8125rem] font-medium text-text-primary">{userName}</span>
+                <span className="text-[0.6875rem] text-text-faint">{userEmail}</span>
               </div>
               <ChevronDown size={14} className="text-text-faint" />
             </div>
             {showUserMenu && (
               <div className="absolute bottom-[calc(100%+6px)] left-0 right-0 bg-bg-elevated border border-border-default rounded-md shadow-lg z-[100] overflow-hidden animate-[fadeInUp_0.15s_ease]">
-                <div className="flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] text-text-secondary cursor-pointer transition-all duration-150 hover:bg-bg-tertiary hover:text-text-primary" onClick={() => { setShowUserMenu(false); addToast('Profile: you@acme.dev — Engineer at Acme Engineering.', 'info') }}><Settings size={14} /> Settings</div>
+                <div className="flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] text-text-secondary cursor-pointer transition-all duration-150 hover:bg-bg-tertiary hover:text-text-primary" onClick={() => { setShowUserMenu(false); addToast(`Profile: ${userEmail} — ${userName}`, 'info') }}><Settings size={14} /> Settings</div>
                 <div className="flex items-center gap-3 px-3.5 py-2.5 text-[0.8125rem] cursor-pointer transition-all duration-150 text-status-red border-t border-border-muted hover:bg-[rgba(218,54,51,0.1)] hover:text-status-red" onClick={handleLogout}><LogOut size={14} /> Log out</div>
               </div>
             )}
@@ -875,7 +874,7 @@ export default function DashboardPage() {
               <Clock size={16} className="cursor-pointer transition-colors duration-150 hover:text-text-primary" onClick={() => setShowVersions(true)} />
               <MessageSquare size={16} className="cursor-pointer transition-colors duration-150 hover:text-text-primary" onClick={() => setShowComments(true)} />
               <div className="flex items-center ml-2 max-sm:hidden">
-                {docCollaborators.map((a, i) => <div key={i} className="w-6 h-6 rounded-full flex items-center justify-center text-[0.625rem] font-bold text-white shadow-[0_0_0_2px_var(--color-bg-primary)] -ml-2 first:ml-0 relative z-[1]" style={{ backgroundColor: a.color }}>{a.initials}</div>)}
+                <div className="w-6 h-6 rounded-full flex items-center justify-center text-[0.625rem] font-bold text-white shadow-[0_0_0_2px_var(--color-bg-primary)] bg-accent-primary">{userInitials}</div>
               </div>
               <button className="bg-accent-primary text-white hover:bg-accent-hover shadow-sm px-3 py-1.5 inline-flex items-center justify-center font-medium rounded-md transition-colors whitespace-nowrap gap-1.5 text-[0.8125rem]" onClick={() => setShowShare(true)}><Share2 size={14} /> Share</button>
               <div className="relative">
