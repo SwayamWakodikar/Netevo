@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { authAPI } from '../lib/api'
+import { authAPI, setAuthToken } from '../lib/api'
 
 const AuthContext = createContext(null)
 
@@ -9,38 +9,18 @@ export function AuthProvider({ children }) {
   const [refreshToken, setRefreshToken] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // ── Hydrate from localStorage on mount ──
+  // ── Initialization ──
   useEffect(() => {
-    try {
-      const storedToken = localStorage.getItem('access_token')
-      const storedRefresh = localStorage.getItem('refresh_token')
-      const storedUser = localStorage.getItem('user')
-
-      if (storedToken && storedUser) {
-        setToken(storedToken)
-        setRefreshToken(storedRefresh)
-        setUser(JSON.parse(storedUser))
-      }
-    } catch {
-      // Corrupted storage — clear it
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('refresh_token')
-      localStorage.removeItem('user')
-    } finally {
-      setLoading(false)
-    }
+    setLoading(false)
   }, [])
 
-  // ── Persist auth state to localStorage ──
+  // ── Persist auth state to memory ──
   const persistAuth = useCallback((authData) => {
     const { user: userData, token: accessToken, refresh_token: rToken } = authData
     setUser(userData)
     setToken(accessToken)
     setRefreshToken(rToken)
-
-    localStorage.setItem('access_token', accessToken)
-    localStorage.setItem('refresh_token', rToken)
-    localStorage.setItem('user', JSON.stringify(userData))
+    setAuthToken(accessToken)
   }, [])
 
   // ── Signup ──
@@ -62,14 +42,11 @@ export function AuthProvider({ children }) {
     try {
       await authAPI.logout()
     } catch {
-      // Even if the API call fails, clear local state
     }
     setUser(null)
     setToken(null)
     setRefreshToken(null)
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-    localStorage.removeItem('user')
+    setAuthToken(null)
   }, [])
 
   // ── Refresh tokens ──

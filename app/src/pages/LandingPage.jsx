@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Zap, Users, FileText, Shield, Command, Globe } from 'lucide-react'
+import { ArrowRight, Zap, Users, FileText, Shield, Command, Globe, Lightbulb } from 'lucide-react'
 import { useToast } from '../components/Toast'
 
 const features = [
@@ -178,7 +178,7 @@ export default function LandingPage() {
                 <div className="h-3 bg-bg-elevated rounded w-full mb-2" />
                 <div className="h-3 bg-bg-elevated rounded w-[60%] mb-2" />
                 <div className="flex items-start gap-2 p-4 bg-[rgba(210,153,34,0.08)] border-l-[3px] border-status-orange rounded-r-md my-4 text-[0.8125rem] text-text-secondary">
-                  <span>💡</span>
+                  <span><Lightbulb size={16} /></span>
                   <span>Anchor decisions on measurable outcomes.</span>
                 </div>
                 <div className="h-3 bg-bg-elevated rounded w-full mb-2" />

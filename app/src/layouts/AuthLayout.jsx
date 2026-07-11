@@ -33,7 +33,7 @@ export default function AuthLayout({ children }) {
           </Link>
 
           <div className="animate-[fadeInUp_0.7s_ease_0.1s_both] max-[900px]:mb-6">
-            <h1 className="text-[2.75rem] max-[900px]:text-[1.75rem] font-bold leading-[1.15] text-[rgba(240,246,252,0.45)] tracking-[-0.02em] mb-6">
+            <h1 className="text-[2.75rem] max-[900px]:text-[1.75rem] font-bold leading-[1.15] text-[rgba(255, 255, 255, 1)] tracking-[-0.02em] mb-6">
               The workspace where<br />teams think together.
             </h1>
             <p className="text-[0.9375rem] leading-[1.65] text-[rgba(240,246,252,0.4)] max-w-[420px]">

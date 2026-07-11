@@ -19,12 +19,10 @@ func main() {
 	log.Println("Config loaded successfully")
 	log.Printf("Environment: %s\n", cfg.Environment)
 
-	// Set Gin mode based on environment
 	if cfg.Environment == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// Create Gin router
 	router := gin.Default()
 
 	routes.SetupRoutes(router, cfg)

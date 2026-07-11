@@ -6,7 +6,8 @@ import {
   Users, Trash2, HelpCircle, Plus, SlidersHorizontal, Share2, Bookmark,
   ArrowUpRight, CheckSquare, Square, X, LogOut, Settings, Copy, Check,
   RotateCcw, Download, Files, Trash, Send, Bot, User, Keyboard,
-  ArrowDown, ArrowUp, Navigation, Edit2, LayoutDashboard
+  ArrowDown, ArrowUp, Navigation, Edit2, LayoutDashboard,
+  Lightbulb, Target, Palette, BarChart, AlertCircle
 } from 'lucide-react'
 import { useToast } from '../components/Toast'
 import { useAuth } from '../context/AuthContext'
@@ -23,7 +24,7 @@ const initialDocs = {
     updatedAgo: '2h ago', editingNow: 3,
     content: [
       { type: 'paragraph', text: 'This document captures the strategic priorities for the platform team in Q2. We focus on three pillars: reliability, developer velocity, and customer-facing performance.' },
-      { type: 'callout', icon: '💡', text: 'Anchor decisions on measurable outcomes, not feature counts. Every initiative should have a single owner and a 6-week target.' },
+      { type: 'callout', icon: <Lightbulb size={20} />, text: 'Anchor decisions on measurable outcomes, not feature counts. Every initiative should have a single owner and a 6-week target.' },
       { type: 'heading', text: 'Pillar 1 — Reliability' },
       { type: 'bullet', text: 'Reduce p99 sync latency below 120ms across all regions.' },
       { type: 'bullet', text: 'Migrate the connection pool to per-region pgbouncer instances.' },
@@ -44,7 +45,7 @@ const initialDocs = {
     updatedAgo: '6h ago', editingNow: 1,
     content: [
       { type: 'paragraph', text: 'This RFC proposes migrating presence and CRDT state from the monolith to a dedicated edge service, targeting sub-50ms sync latency globally.' },
-      { type: 'callout', icon: '🎯', text: "Goal: every keystroke from one user should appear on a collaborator's screen within 50ms, regardless of region." },
+      { type: 'callout', icon: <Target size={20} />, text: "Goal: every keystroke from one user should appear on a collaborator's screen within 50ms, regardless of region." },
       { type: 'heading', text: 'Background' },
       { type: 'paragraph', text: 'Our current collaboration stack runs on a single WebSocket gateway in us-east-1. Users in APAC and EMEA experience 200–400ms round-trip latency.' },
       { type: 'heading', text: 'Proposed Architecture' },
@@ -84,7 +85,7 @@ const initialDocs = {
     updatedAgo: '1d ago', editingNow: 0,
     content: [
       { type: 'paragraph', text: 'Consolidate spacing, radii, and elevation across web, desktop, and mobile surfaces into a unified token system.' },
-      { type: 'callout', icon: '🎨', text: 'Design tokens are the single source of truth for visual style. Every component should reference tokens, not raw values.' },
+      { type: 'callout', icon: <Palette size={20} />, text: 'Design tokens are the single source of truth for visual style. Every component should reference tokens, not raw values.' },
       { type: 'heading', text: 'Token Categories' },
       { type: 'bullet', text: 'Spacing: 4px, 8px, 12px, 16px, 24px, 32px, 48px, 64px.' },
       { type: 'bullet', text: 'Radius: sm (4px), md (8px), lg (12px), xl (16px), full (9999px).' },
@@ -99,7 +100,7 @@ const initialDocs = {
     updatedAgo: '2d ago', editingNow: 0,
     content: [
       { type: 'paragraph', text: 'Goal: reduce time-to-first-doc from 4 minutes to under 60 seconds.' },
-      { type: 'callout', icon: '📊', text: '38% of new signups never create their first document. Our activation metric is broken.' },
+      { type: 'callout', icon: <BarChart size={20} />, text: '38% of new signups never create their first document. Our activation metric is broken.' },
       { type: 'heading', text: 'Proposed Flow' },
       { type: 'bullet', text: 'Step 1: Sign up (email or SSO) — 10 seconds.' },
       { type: 'bullet', text: 'Step 2: Choose workspace template — 15 seconds.' },
@@ -115,7 +116,7 @@ const initialDocs = {
     updatedAgo: '3d ago', editingNow: 0,
     content: [
       { type: 'paragraph', text: 'Incident duration: 47 minutes (Apr 25). Impact: ~2,400 users experienced sync failures in EU-west.' },
-      { type: 'callout', icon: '🔴', text: 'Severity: SEV-1. Customer-facing impact with data sync delays. No data loss confirmed.' },
+      { type: 'callout', icon: <AlertCircle size={20} />, text: 'Severity: SEV-1. Customer-facing impact with data sync delays. No data loss confirmed.' },
       { type: 'heading', text: 'Root Cause' },
       { type: 'paragraph', text: 'Connection pool exhaustion on the EU-west pgbouncer instance. A runaway migration script opened 150 connections.' },
       { type: 'heading', text: 'Timeline' },
@@ -230,7 +231,7 @@ export default function DashboardPage() {
   const { addToast } = useToast()
   const { user, logout } = useAuth()
 
-  // Derive user display info from auth context
+
   const userInitials = user?.username
     ? user.username.slice(0, 2).toUpperCase()
     : user?.email?.slice(0, 2).toUpperCase() || 'U'
