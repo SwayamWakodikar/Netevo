@@ -47,6 +47,7 @@ export function healthCheck() {
   sleep(1);
 }
 
+
 export function rateLimitCheck() {
   // Blast requests without sleep to hit the 10r/s + 20 burst limit
   let res = http.get(`${BASE_URL}/health`);
