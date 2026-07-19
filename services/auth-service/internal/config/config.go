@@ -13,6 +13,7 @@ type Config struct {
 	Port        string
 	Environment string
 	JWT_SECRET  string
+	RedisURL    string
 }
 
 func Load() *Config {
@@ -31,7 +32,12 @@ func Load() *Config {
 	if jwt_secret == "" {
 		log.Fatal("JWT_SECRET is not set")
 	}
-	
+
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
+		redisURL = "redis://localhost:6379"
+	}
+
 
 
 	return &Config{
@@ -40,6 +46,7 @@ func Load() *Config {
 		Port:        port,
 		Environment: env,
 		JWT_SECRET:  jwt_secret,
+		RedisURL:    redisURL,
 	}
 }
  

@@ -1,5 +1,11 @@
 version: "5.1.1"
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
   auth-service:
     build: 
       context: ../../services/auth-service
@@ -8,6 +14,10 @@ services:
       - "8081:8080"
     env_file:
       - ../../services/auth-service/.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
   api-gateway:
     build: 
       context: ../../services/api-gateway
@@ -16,4 +26,6 @@ services:
       - "8080:8080"
     depends_on:
       - auth-service
-      
+
+volumes:
+  redis_data:

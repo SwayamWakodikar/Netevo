@@ -6,11 +6,12 @@ import (
 	"github.com/SwayamWakodikar/netevo/services/auth-service/internal/config"
 	"github.com/SwayamWakodikar/netevo/services/auth-service/internal/handlers"
 	"github.com/SwayamWakodikar/netevo/services/auth-service/internal/middleware"
+	"github.com/SwayamWakodikar/netevo/services/auth-service/internal/service"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(router *gin.Engine, cfg *config.Config) {
+func SetupRoutes(router *gin.Engine, cfg *config.Config, redisService *service.RedisService) {
 	// CORS — allow the frontend dev server
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
@@ -24,7 +25,8 @@ func SetupRoutes(router *gin.Engine, cfg *config.Config) {
 	router.Use(middleware.LoggingMiddleware())
 	router.Use(middleware.ErrorHandlingMiddleware())
 
-	authHandler := handlers.NewAuthHandler(cfg)
+	authHandler := handlers.NewAuthHandler(cfg, redisService)
+	authMiddleware := middleware.NewAuthMiddleware(authHandler.TokenService, redisService)
 
 	auth := router.Group("/api/v1/auth")
 	{
@@ -35,6 +37,7 @@ func SetupRoutes(router *gin.Engine, cfg *config.Config) {
 	}
 
 	protected := router.Group("/api/v1/user")
+	protected.Use(authMiddleware.RequireAuth())
 	{
 		protected.GET("/profile", authHandler.GetProfile)
 	}

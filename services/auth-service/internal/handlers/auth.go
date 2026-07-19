@@ -14,13 +14,15 @@ import (
 type AuthHandler struct {
 	SupabaseService *service.SupabaseService
 	TokenService    *service.TokenService
+	RedisService    *service.RedisService
 }
 
-func NewAuthHandler(cfg *config.Config) *AuthHandler {
+func NewAuthHandler(cfg *config.Config, redisService *service.RedisService) *AuthHandler {
 	client := &http.Client{Timeout: 10 * time.Second}
 	return &AuthHandler{
 		SupabaseService: service.NewSupabaseService(cfg, client),
 		TokenService:    service.NewTokenService(cfg.JWT_SECRET),
+		RedisService:    redisService,
 	}
 }
 
@@ -71,6 +73,13 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
 			Error: "Failed to generate tokens",
+		})
+		return
+	}
+
+	if err := h.RedisService.StoreAccessToken(ctx, user.ID, accessToken, 15*time.Minute); err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: "Failed to store session",
 		})
 		return
 	}
@@ -133,6 +142,13 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
+	if err := h.RedisService.StoreAccessToken(ctx, user.ID, accessToken, 15*time.Minute); err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: "Failed to store session",
+		})
+		return
+	}
+
 	user.Password = ""
 
 	c.JSON(http.StatusOK, models.AuthResponse{
@@ -145,7 +161,10 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 func (h *AuthHandler) GetProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Protected profile endpoint",
+		"message":  "Protected profile endpoint",
+		"user_id":  c.GetString("user_id"),
+		"email":    c.GetString("email"),
+		"username": c.GetString("username"),
 	})
 }
 
@@ -158,6 +177,8 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 		})
 		return
 	}
+
+	ctx := context.Background()
 
 	claims, err := h.TokenService.ValidateToken(req.RefreshToken)
 	if err != nil {
@@ -179,6 +200,13 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 		return
 	}
 
+	if err := h.RedisService.StoreAccessToken(ctx, user.ID, accessToken, 15*time.Minute); err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error: "Failed to store session",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, models.AuthResponse{
 		Message:      "Tokens refreshed successfully",
 		Token:        accessToken,
@@ -187,7 +215,25 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 }
 
 func (h *AuthHandler) Logout(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	token := extractBearerToken(authHeader)
+
+	if token != "" {
+		if claims, err := h.TokenService.ValidateToken(token); err == nil && claims.UserID != "" {
+			ctx := context.Background()
+			_ = h.RedisService.DeleteAccessToken(ctx, claims.UserID)
+		}
+	}
+
 	c.JSON(http.StatusOK, models.AuthResponse{
 		Message: "User logged out successfully",
 	})
+}
+
+func extractBearerToken(header string) string {
+	const prefix = "Bearer "
+	if len(header) > len(prefix) && header[:len(prefix)] == prefix {
+		return header[len(prefix):]
+	}
+	return ""
 }
