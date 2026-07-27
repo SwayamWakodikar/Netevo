@@ -17,7 +17,7 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379
     depends_on:
-      - reis
+      - redis
   api-gateway:
     build: 
       context: ../../services/api-gateway
