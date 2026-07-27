@@ -28,4 +28,4 @@ services:
       - auth-service
 
 volumes:
-  redis_data:
+  redis_data: 
