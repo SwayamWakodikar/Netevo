@@ -30,9 +30,9 @@ func (r* DB) CreateUser(ctx context.Context,user *models.User) error{
 	return err	
 }
 
-func (r* DB) DeleteUser(ctx context.Context, user *models.User) error {
+func (r* DB) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	query := `DELETE FROM users WHERE id = $1`
-	_, err := r.db.ExecContext(ctx, query, user.ID)
+	_, err := r.db.ExecContext(ctx, query, id)
 	return err
 }
 
@@ -48,4 +48,10 @@ func (r* DB) GetUserById(ctx context.Context, id uuid.UUID) (*models.User, error
 	user := &models.User{}
 	err := r.db.QueryRowContext(ctx, query, id).Scan(&user.ID, &user.Email, &user.Username, &user.Password, &user.CreatedAt)
 	return user,err
+}
+
+func (r* DB) UpdateUser(ctx context.Context, user *models.User) error {
+	query := `UPDATE users SET email = $1, username = $2, password = $3 WHERE id = $4`
+	_, err := r.db.ExecContext(ctx, query, user.Email, user.Username, user.Password, user.ID)
+	return err
 }
