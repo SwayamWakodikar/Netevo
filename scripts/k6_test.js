@@ -1,5 +1,7 @@
 import http from 'k6/http';
 import { check, sleep, group } from 'k6';
+import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
+import { textSummary } from "https://jslib.k6.io/k6-summary/0.0.1/index.js";
 
 // Random string generator for unique usernames/emails
 function randomString(length) {
@@ -125,4 +127,12 @@ export function authFlow() {
 
   // Small sleep to ensure we don't accidentally trip the rate limiter for the auth flow
   sleep(1);
+}
+
+export function handleSummary(data) {
+  return {
+    "report.html": htmlReport(data),
+    stdout: textSummary(data, { indent: " ", enableColors: true }),
+    "report.json": JSON.stringify(data),
+  };
 }
